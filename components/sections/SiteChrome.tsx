@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useScenario } from "@/components/ScenarioController";
 
@@ -31,7 +30,9 @@ export function SiteHeader() {
     <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-black/10 bg-white/95 backdrop-blur">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:rounded focus:bg-[var(--color-yellow)] focus:px-3 focus:py-2">Skip to content</a>
       <div className="mx-auto flex h-full max-w-[1400px] items-center justify-between gap-4 px-5 sm:px-10">
-        <Link href="/" aria-label="AquaGrid home"><Logo /></Link>
+        {/* Use document navigation between WebGL scenes and the control room.
+            This avoids React teardown racing with third-party scene DOM cleanup. */}
+        <a href="/" aria-label="AquaGrid home"><Logo /></a>
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} className="rounded-full px-3 py-2 text-[14.5px] font-[560] hover:bg-[var(--color-mist)]">{l.label}</a>
@@ -42,9 +43,9 @@ export function SiteHeader() {
             <span className={`h-2.5 w-2.5 rounded-full ${offline ? "bg-[var(--color-red)]" : state ? "bg-[var(--color-green)]" : "bg-[var(--color-line)]"}`} aria-hidden="true" />
             {offline ? "Engine offline" : state ? `Engine live, ${state.scene.clock}` : "Connecting"}
           </span>
-          <Link href={path === "/control" ? "/" : "/control"} className="btn btn-primary btn-sm">
+          <a href={path === "/control" ? "/" : "/control"} className="btn btn-primary btn-sm">
             {path === "/control" ? "Back to the story" : "Control room"}
-          </Link>
+          </a>
         </div>
       </div>
     </header>
@@ -61,7 +62,7 @@ export function SiteFooter() {
             AquaGrid is a demonstration digital twin for the Water, Energy &amp; Climate Resilience challenge. It shows how a coastal
             city can weigh energy cost against water security, and keep people in charge of what changes on the network.
           </p>
-          <Link href="/control" className="btn btn-primary mt-6">Open the control room</Link>
+          <a href="/control" className="btn btn-primary mt-6">Open the control room</a>
         </div>
         <div className="text-[14px] leading-relaxed text-white/80">
           <h2 className="text-[15px] font-[680] text-white">What’s real and what isn’t</h2>
