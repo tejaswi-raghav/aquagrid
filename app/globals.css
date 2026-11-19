@@ -154,3 +154,5 @@ input::placeholder, textarea::placeholder { color: #9bb1d1; }
 @media (max-width: 390px) {
   .aquagrid-logo { width: 140px; height: 46px; }
 }
+/* Scene HTML labels may extend beyond their canvas; keep the page itself fixed to the viewport. */
+html { overflow-x: clip; }
