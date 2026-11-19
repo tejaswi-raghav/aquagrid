@@ -39,6 +39,9 @@ export function ExplodedView() {
   const [explore, setExplore] = useState(false);
   const [shotKey, setShotKey] = useState("home");
   const manual = useRef(false);
+  // Furthest scroll progress reached: the sequence only plays forward.
+  const maxProgress = useRef(0);
+  const [snap, setSnap] = useState(false);
   const view = useRef<ViewApi | null>(null);
 
   const use3d = webgl !== false && !flat;
@@ -53,10 +56,29 @@ export function ExplodedView() {
       start: "top top",
       end: "bottom bottom",
       onUpdate: (self) => {
-        const [e, layer] = mapProgress(self.progress);
+        const p = self.progress;
+        if (self.direction < 0) {
+          // Scrolling up: no rewind, the model stays as it is. Back at the top,
+          // cut straight to the intro so the next scroll down plays it again.
+          if (p < 0.08 && maxProgress.current >= 0.08) {
+            maxProgress.current = 0;
+            manual.current = false;
+            explodeTarget.current = 0;
+            explode.current = 0;
+            setSnap(true);
+            setExploded(false);
+            setNarr(null);
+            setIntro(true);
+          }
+          return;
+        }
+        if (p <= maxProgress.current) return;
+        maxProgress.current = p;
+        setSnap(false);
+        const [e, layer] = mapProgress(p);
         if (!manual.current) { explodeTarget.current = e; setExploded(e > 0.5); }
         setNarr(layer);
-        setIntro(self.progress < 0.08);
+        setIntro(p < 0.08);
       },
       onLeave: () => { manual.current = false; },
       onLeaveBack: () => { manual.current = false; },
@@ -68,6 +90,7 @@ export function ExplodedView() {
     manual.current = true;
     const next = explodeTarget.current > 0.5 ? 0 : 1;
     explodeTarget.current = next;
+    setSnap(false);
     setExploded(next > 0.5);
     setIntro(false);
   }, []);
@@ -91,7 +114,7 @@ export function ExplodedView() {
               <TwinCanvas twin={twin} active={inView} enableZoom={explore} label="Interactive 3D model of the AquaGrid coastal water system in five layers">
                 <ExplodeDriver />
                 <ViewBridge apiRef={view} />
-                <IncidentCamera shot={exploded ? EXPLODED_SHOT : HOME_SHOT} shotKey={`${shotKey}-${exploded}`} reducedMotion={reduced} duration={1.4} />
+                <IncidentCamera shot={exploded ? EXPLODED_SHOT : HOME_SHOT} shotKey={`${shotKey}-${exploded}`} reducedMotion={reduced} instant={snap} duration={1.4} />
                 <CoastalCity />
               </TwinCanvas>
             )
@@ -175,7 +198,7 @@ export function ExplodedView() {
                 <button type="button" className="tool max-sm:hidden" aria-pressed={labels} aria-label="Sector labels" onClick={() => setLabels((v) => !v)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" strokeWidth="1.8" /></svg>
                 </button>
-                <button type="button" className="btn btn-ghost btn-sm text-white" onClick={() => { setShotKey(`home-${Date.now()}`); setSelected(null); }}>
+                <button type="button" className="btn btn-ghost btn-sm text-white" onClick={() => { setSnap(false); setShotKey(`home-${Date.now()}`); setSelected(null); }}>
                   Reset view
                 </button>
               </>

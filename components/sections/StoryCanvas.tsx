@@ -20,8 +20,18 @@ export function StoryCanvas({ scene, state, active, reduced, use3d, lockedValve,
   const explodeTarget = useRef(shot.explode);
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+  // Stepping back (scrolling up) cuts to the earlier shot instead of animating in reverse.
+  const [prevScene, setPrevScene] = useState(scene);
+  const [backward, setBackward] = useState(false);
+  if (scene !== prevScene) { setPrevScene(scene); setBackward(scene < prevScene); }
 
-  useEffect(() => { explodeTarget.current = shot.explode; setSelected(null); setHovered(shot.asset ?? null); }, [shot]);
+  useEffect(() => {
+    explodeTarget.current = shot.explode;
+    if (backward) explode.current = shot.explode;
+    setSelected(null);
+    setHovered(shot.asset ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shot]);
 
   // Scene 6: show the backend-projected minimum in the reservoirs when asked.
   const shown = useMemo<SimState | null>(() => {
@@ -40,7 +50,7 @@ export function StoryCanvas({ scene, state, active, reduced, use3d, lockedValve,
       {use3d ? (
         <TwinCanvas twin={twin} active={active} enableZoom={false} label={`3D model focused on scene ${scene}`} initial={{ pos: shot.pos }}>
           <ExplodeDriver />
-          <IncidentCamera shot={shot} shotKey={String(scene)} reducedMotion={reduced} duration={2} />
+          <IncidentCamera shot={shot} shotKey={String(scene)} reducedMotion={reduced} instant={backward} duration={2} />
           <CoastalCity />
         </TwinCanvas>
       ) : (
