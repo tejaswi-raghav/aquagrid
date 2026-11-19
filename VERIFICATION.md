@@ -38,3 +38,12 @@ Verified mobile Control Room and homepage widths at 390 px: document scroll widt
 This is a synthetic, simulation-only MVP. Hydraulic geometry and demand are reproducible but uncalibrated. The pump outage is a supply-link closure; no pump curve, transients or water-quality transport is modeled. Deterministic rules and optimization are used; no external LLM or physical actuator is connected. Audit is durable application history, not an immutable ledger. Demo identities and unguessable scenario IDs are not production tenant authentication.
 
 The public story is a read-only narrative seed, not the saved operational room. It cannot execute changes. Current authoritative operational decisions live in `/control`. The exact three service interfaces remain in `backend/aquagrid/services.py`; legacy stateless valve mutation endpoints return 410.
+
+
+## Follow-up: retained story and non-overlapping layer key
+
+- Restored inline harbour-valve staging, unsafe inlet what-if, operator login, analyst rejection and simulated approval on the public 14:20 story step. The existing durable gateway persists inputs, checks and outcomes. The 3D valve and leak animation update from that saved backend state.
+- `create_story` initializes a new isolated compound-disruption scenario; it cannot overwrite an existing room. Its identifier is shared with the Control Room when the visitor opens the saved decision there.
+- Hero text has its own layout region, separate from the canvas. Five numbered layer names and short descriptions occupy a reserved key beside the model on wide screens and below it on narrow screens. Selecting a label highlights its layer.
+- Removed the remaining drei HTML portals from the scene. The awaiting-approval lock is now model geometry, avoiding DOM teardown races and projected-text collisions.
+- 49 backend tests pass, including isolated story initialization and role-gated persisted story execution. Browser checks at 633 × 653 verified unsafe inlet rejection, analyst denial, operator approval and stopped leak animation. Caption/model DOM bounds do not intersect; document width equals viewport width.

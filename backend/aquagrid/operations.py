@@ -174,6 +174,11 @@ class Operations:
     def create(self):
         from_config(Config().model_dump())  # Validate solver availability before allocating storage.
         return self.repo.create(new_document())
+    def create_story(self):
+        d=new_document();d['config']=copy.deepcopy(COMPOUND);d['quarantined']=['P-S4B']
+        analysis(d)  # Validate the seeded model before allocating a new document.
+        event(d,'INGEST',{'dataset':'coastal-synthetic-v3-compound','source':'inline story initialization'})
+        return self.enrich(self.repo.create(d))
     def read_network_telemetry(self,id):
         doc=self.repo.read(id);return self.enrich(doc)
     def read_tariff_and_quality_feeds(self,id):

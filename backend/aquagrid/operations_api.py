@@ -9,6 +9,7 @@ def dispatch(method,path,raw):
         body=json.loads(raw or b'{}')
         if not isinstance(body,dict):raise ValueError('JSON object required')
         ops=Operations()
+        if path=='/api/ops/create_story' and method=='POST':return 200,ops.create_story()
         if path=='/api/ops/create' and method=='POST':return 200,ops.enrich(ops.create())
         if path=='/api/ops/read' and method=='POST':return 200,ops.read_network_telemetry(body['scenario_id'])
         if path=='/api/ops/feeds' and method=='POST':return 200,ops.read_tariff_and_quality_feeds(body['scenario_id'])

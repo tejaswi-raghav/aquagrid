@@ -24,6 +24,8 @@ export function DisruptionStory() {
   const [stageRef, inView] = useInView<HTMLDivElement>("0px");
   const cards = useRef<(HTMLElement | null)[]>([]);
   const [lockedValve, setLockedValve] = useState<string | null>(null);
+  const [controlState, setControlState] = useState<SimState | null>(null);
+  const onOperationalState = useCallback((value: SimState) => setControlState({ ...value, scene: { ...value.scene, id: 7, clock: "14:20" } }), []);
   const [projection, setProjection] = useState<number | null>(null);
   const onLock = useCallback((v: string | null) => setLockedValve(v), []);
   const onProjection = useCallback((p: number | null) => setProjection(p), []);
@@ -61,11 +63,11 @@ export function DisruptionStory() {
 
       <div className="mx-auto flex max-w-[1400px] flex-col md:grid md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] md:gap-10 md:px-10">
         {/* Sticky viewport */}
-        <div ref={stageRef} className="sticky top-16 z-10 h-[42svh] min-w-0 md:top-20 md:h-[calc(100svh-6rem)]">
+        <div ref={stageRef} className="sticky top-16 z-10 h-[34svh] min-w-0 md:top-20 md:h-[calc(100svh-6rem)]">
           <div className="on-navy relative h-full overflow-hidden bg-[var(--color-navy)] md:rounded-2xl">
             {webgl !== null && (
               <StoryCanvas
-                scene={scene} state={live} active={inView} reduced={reduced} use3d={webgl}
+                scene={scene} state={scene === 7 && controlState ? controlState : live} active={inView} reduced={reduced} use3d={webgl}
                 lockedValve={scene === 7 ? lockedValve : null} projectedStoragePct={scene === 6 ? projection : null}
               />
             )}
@@ -133,7 +135,7 @@ export function DisruptionStory() {
                   {ready && s.id === 4 && <SceneFlatline s={ready} active={active} />}
                   {ready && s.id === 5 && <SceneBloom s={ready} />}
                   {ready && s.id === 6 && <SceneDecision s={ready} active={active} onProjection={onProjection} />}
-                  {ready && s.id === 7 && <SceneControl s={ready} onLock={onLock} />}
+                  {ready && s.id === 7 && <SceneControl s={ready} onLock={onLock} onOperationalState={onOperationalState} />}
                 </div>
                 <div className="mt-8 flex gap-2">
                   {s.id > 1 && <button type="button" className="btn btn-ghost btn-sm" onClick={() => goTo(s.id - 1)}>Previous step</button>}

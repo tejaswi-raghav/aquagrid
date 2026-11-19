@@ -24,7 +24,7 @@ npm run typecheck
 npm run build
 ```
 
-Local verification passed 47 tests, TypeScript and a production build with `next build --webpack`. Turbopack's local CSS worker is blocked by the desktop sandbox's port-binding restriction; webpack produces the supported equivalent Next.js bundle. Vercel uses its normal configured builder.
+Local verification passed 49 tests, TypeScript and a production build with `next build --webpack`. Turbopack's local CSS worker is blocked by the desktop sandbox's port-binding restriction; webpack produces the supported equivalent Next.js bundle. Vercel uses its normal configured builder.
 
 ## Judge walkthrough
 
@@ -44,7 +44,7 @@ Local verification passed 47 tests, TypeScript and a production build with `next
 - `network.py`: process and distribution asset graph with attached sensor IDs. Graph disconnection and hydraulic consequences are explicitly distinguished. Pump failure closes the modeled supply link; there is no pump curve or transient model.
 - `repository.py`: SQLite transactions locally; private Vercel Blob JSON documents with ETag compare-and-swap in production. Applied state, approval, outcome and audit commit together. Missing durable storage disables hosted operational writes; no serverless SQLite fallback.
 - `services.py`: the three required service names: `read_network_telemetry`, `read_tariff_and_quality_feeds`, `stage_gated_valve_or_setpoint_action`. Reads cannot mutate. Staging cannot execute. No agent execution tool is exposed.
-- `OperationsWorkspace.tsx`: Monitor / Investigate / Decide, connected incident queue, schematic twin, contextual inspector, evidence, Scenario Lab, impact evaluation, planning, approval and replay. The public story is explicitly a read-only narrative preview; public scrolling cannot change applied operational state.
+- `OperationsWorkspace.tsx`: Monitor / Investigate / Decide, connected incident queue, schematic twin, contextual inspector, evidence, Scenario Lab, impact evaluation, planning, approval and replay. Public scrolling remains a narrative preview. The final step restores inline valve what-if, staging, operator sign-in and approval through the same persisted gateway as /control.
 
 The optimizer uses exact dynamic programming over 50 m³/h controls across ten hours. Storage: `next volume = volume + production − delivered customer demand − solved loss`. Bounds: 100–800 m³/h production, 35–98% reserve in 10,000 m³, terminal reserve at least the starting reserve. Energy is `p × (2.64 + 120/p + 0.0011p)` kWh, tariffs $0.32 during 14:00–20:00 and $0.12 otherwise. The baseline is the applied schedule; savings can reflect both tariff shifts and a different terminal reserve. Infeasible optimization is omitted, not invented.
 
@@ -62,7 +62,7 @@ All `/api/ops/*` endpoints use JSON POSTs. Mutation requests require `scenario_i
 | decision | Operator authorization, freshness and safety revalidation, atomic simulated execution |
 | actuate | Always 403; no physical adapter exists |
 
-`/api/auth/login`, `/api/network`, `/api/desal` and read-only narrative APIs remain. Legacy stateless `/api/valves/stage` and `/approve` return 410 so there is one operational gateway.
+`create_story` initializes an isolated compound-disruption copy for the inline demonstration; it does not mutate an existing scenario. `/api/auth/login`, `/api/network`, `/api/desal` and narrative APIs remain. Legacy stateless `/api/valves/stage` and `/approve` return 410 so there is one operational gateway.
 
 At approval the server checks operator role, token signature/expiry, scenario version/epoch, pending status, ten-minute proposal lease and five-minute telemetry freshness, and recalculates all safety results. A new sample, reset or staged proposal invalidates prior pending actions. Concurrent approval has one winner. Failed execution rolls back approval and audit as well as state. Replay only inspects stored records.
 
@@ -72,7 +72,7 @@ Vercel builds Next.js and bundles the Python engine via `api/index.py`. `require
 
 ## Validation and limits
 
-The 47 automated tests include all three workflows, seven scenario classes, real EPANET mass balance, leak versus isolated sensor fault, optimizer feasibility, hospital isolation rejection, reserve and quality guards, analyst/forged-token denial, stale state, reset invalidation, concurrent duplicate approval, persistence and execution rollback. Browser verification covers incident selection, valve preview/staging/approval/replay, scheduling and responsive layout. See `VERIFICATION.md` for deployment results.
+The 49 automated tests include all three workflows, seven scenario classes, real EPANET mass balance, leak versus isolated sensor fault, optimizer feasibility, hospital isolation rejection, reserve and quality guards, analyst/forged-token denial, stale state, reset invalidation, concurrent duplicate approval, persistence and execution rollback. Browser verification covers incident selection, valve preview/staging/approval/replay, scheduling and responsive layout. See `VERIFICATION.md` for deployment results.
 
 This is a production-inspired MVP, **not a live utility control system**. Measurements, geometry and forecasts are synthetic and uncalibrated. No LLM provider is connected: the analyst is deterministic and cannot actuate. There is no water-quality transport, transient hydraulics, real SCADA, institutional identity provider, tamper-proof ledger or regulatory certification. Audit is durable application history, not cryptographic immutability. Rooms use unguessable identifiers; demo accounts and room identifiers are not tenant-grade access control.
 

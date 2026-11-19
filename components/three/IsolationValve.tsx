@@ -1,6 +1,5 @@
 "use client";
 
-import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -45,14 +44,11 @@ export function IsolationValve({ id, position, rotationY = 0, locked = false }: 
         </group>
         <mesh material={mats.chamber} position={[0, 1.2, 0]}><boxGeometry args={[2, 2.6, 2]} /></mesh>
       </group>
-      {locked && (
-        <Html position={[0, 3.6, 0]} center zIndexRange={[20, 10]} style={{ pointerEvents: "none" }}>
-          <div className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-black bg-[var(--color-yellow)] px-2.5 py-1 text-[12px] font-[680] text-black">
-            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V7a6 6 0 1 1 12 0v3h1v12H5V10h1Zm2 0h8V7a4 4 0 1 0-8 0v3Z" fill="currentColor" /></svg>
-            Locked, awaiting operator
-          </div>
-        </Html>
-      )}
+      {locked && <group position={[0, 4.2, 0]}>
+        <mesh material={mats.wheel}><boxGeometry args={[.9, .7, .3]} /></mesh>
+        <mesh material={mats.wheel} position={[0, .5, 0]}><torusGeometry args={[.3, .07, 8, 24, Math.PI]} /></mesh>
+      </group>}
+
     </Asset>
   );
 }

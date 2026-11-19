@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api, ApiError, type DesalModel, type Evaluation, type SensorAnalysis, type SimState, type StageResult } from "@/lib/api";
 import { useScenario } from "@/components/ScenarioController";
 import { Authority, CheckList, ErrorNote, Figure, StatusChip, Verdict } from "@/components/ui/bits";
+import { StoryControl } from "./StoryControl";
 import { LineChart, SERIES } from "@/components/ui/LineChart";
 
 const money = (v: number) => `$${Math.round(v).toLocaleString()}`;
@@ -287,14 +288,6 @@ export function SceneDecision({ s, active, onProjection }: { s: SimState; active
 }
 
 /* 7 ─ Human control */
-export function SceneControl({ s, onLock }: { s: SimState; onLock: (valve: string | null) => void }) {
-  useEffect(()=>{onLock(null)},[onLock]);
-  return <div className="space-y-5">
-    <Verdict kind="locked" headline="HUMAN AUTHORIZATION REQUIRED">
-      A model result is evidence, not permission to actuate. Compare isolation impacts and review deterministic safety checks in the operational workspace.
-    </Verdict>
-    <p>Open the persisted scenario to investigate the harbour valve, stage a response, and authorize it as the demo control-room operator. Decisions, input snapshots and outcomes are saved by the backend.</p>
-    <a href="/control" className="btn btn-primary">Open decision workspace</a>
-    <p className="text-[13px] text-[var(--color-muted)]">This public walkthrough previews the seeded disruption. It does not apply plant or valve changes. The control workspace owns authoritative scenario state.</p>
-  </div>;
+export function SceneControl({ onLock, onOperationalState }: { s: SimState; onLock: (valve: string | null) => void; onOperationalState: (state: SimState) => void }) {
+  return <StoryControl onLock={onLock} onOperationalState={onOperationalState} />;
 }

@@ -79,7 +79,7 @@ export function SiteFooter() {
             <li>All telemetry is synthetic and deterministic. Every operational value on these pages is computed by the Python simulation engine; the browser only draws it.</li>
             <li>Storage follows next volume = volume + production − demand − modelled loss, hourly, over 10,000 m³ with an illustrative 35% floor.</li>
             <li>Energy uses a plant curve calibrated to 3.5 kWh/m³ at 600 m³/h, with illustrative tariffs of $0.32 (14:00–20:00) and $0.12/kWh.</li>
-            <li>The narrative is a read-only preview. Control-room decisions are persisted with server-enforced checks and human authorization; nothing connects to a real actuator, PLC or SCADA system.</li>
+            <li>The guided story explains a seeded scenario. Inline valve decisions and control-room decisions share persisted evidence, server-enforced checks and human authorization; nothing connects to a real actuator, PLC or SCADA system.</li>
           </ul>
         </div>
       </div>

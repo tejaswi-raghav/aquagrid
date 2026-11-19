@@ -19,6 +19,18 @@ class OperationalWorkflows(unittest.TestCase):
  def compound(self):self.d=self.ops.event(Event(**self.args(token=self.operator,operation='compound')))
  def stage(self,**kw):self.d=self.ops.stage_gated_valve_or_setpoint_action(ProposalRequest(**self.args(**kw)));return self.d['proposals'][-1]
  def decide(self,p,**kw):return self.ops.decide(Decision(**self.args(token=kw.pop('token',self.operator),proposal_id=p['id'],**kw)))
+ def test_story_seed_is_an_isolated_persistent_compound_copy(self):
+  before=self.repo.read(self.d['id']);story=self.ops.create_story()
+  self.assertNotEqual(story['id'],self.d['id']);self.assertEqual(story['version'],1)
+  self.assertTrue(story['evidence']['leak']['confirmed']);self.assertEqual(story['evidence']['sensor']['classification'],'FLATLINE')
+  self.assertEqual(story['config']['closed'],[]);self.assertEqual(before,self.repo.read(self.d['id']))
+  self.assertEqual(self.ops.read_network_telemetry(story['id'])['config'],story['config'])
+ def test_inline_story_uses_same_role_gate_and_persisted_outcome(self):
+  self.d=self.ops.create_story();p=self.stage(kind='valve',valve_id='V-04B')
+  with self.assertRaises(security.AuthError):self.decide(p,token=self.analyst)
+  self.d=self.decide(p);restored=self.ops.read_network_telemetry(self.d['id'])
+  self.assertEqual(restored['state']['valves']['V-04B']['position'],'closed');self.assertFalse(restored['state']['leak']['active'])
+  self.assertEqual(restored['proposals'][-1]['status'],'EXECUTED_IN_SIMULATION')
  def test_read_interfaces_do_not_mutate(self):
   before=self.repo.read(self.d['id']);self.ops.read_network_telemetry(self.d['id']);self.ops.read_tariff_and_quality_feeds(self.d['id']);self.assertEqual(before,self.repo.read(self.d['id']))
  def test_all_seven_scenario_previews_are_read_only(self):
