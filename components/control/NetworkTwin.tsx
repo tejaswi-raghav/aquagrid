@@ -36,7 +36,7 @@ function colour(status?: string) {
   if (status === "warning" || status === "watch" || status === "fault" || status === "flatline") return "#e8892b";
   if (status === "quarantined" || status === "isolated") return "#7d8699";
   if (status === "closed") return "#fff44f";
-  return "#69b9ae";
+  return "#62a7ea";
 }
 
 export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideInspector=false}: {
@@ -123,11 +123,11 @@ export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideIn
         >
           <defs>
             <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#24397a" /></pattern>
-            <style>{`@keyframes dash{to{stroke-dashoffset:-40}} .flow{stroke-dasharray:6 14;animation:dash linear infinite} @media (prefers-reduced-motion: reduce){.flow{animation:none}}`}</style>
+            <style>{`@keyframes dash{to{stroke-dashoffset:-40}} .flow{stroke-dasharray:6 14;animation:dash linear infinite} @keyframes nodepulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}} .node-pulse{transform-box:fill-box;transform-origin:center;animation:nodepulse 1.6s ease-out infinite} @media (prefers-reduced-motion: reduce){.flow,.node-pulse{animation:none}}`}</style>
           </defs>
           <rect width="980" height="680" fill="url(#dots)" />
           <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}>
-            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#204247" opacity="0.55" />
+            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#123b80" opacity="0.6" />
             {topo?.edges.map((e) => {
               const a = POS[e.from], b = POS[e.to];
               if (!a || !b) return null;
@@ -157,12 +157,15 @@ export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideIn
                   transform={`translate(${p[0]} ${p[1]})`} opacity={dim ? 0.18 : 1} className="cursor-pointer"
                   onClick={() => setSelected(a.id)}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(a.id); } }}>
+                  {(st === "critical" || st === "alarm" || st === "warning" || st === "fault" || st === "flatline") && (
+                    <circle className="node-pulse" r={isSensor ? 9 : 24} fill="none" stroke={colour(st)} strokeWidth="2" />
+                  )}
                   {selected === a.id && <circle r={isSensor ? 13 : 30} fill="none" stroke="#fff44f" strokeWidth="3" />}
                   {isSensor ? (
                     <circle r="7" fill={colour(st)} stroke="#0c1b48" strokeWidth="2" />
                   ) : (
                     <>
-                      <circle r="23" fill="#12282c" stroke={colour(st)} strokeWidth="2" />
+                      <circle r="23" fill="#0c1b48" stroke={colour(st)} strokeWidth="2" />
                       <path d={glyph(a.type)} fill="none" stroke={colour(st)} strokeWidth="1.6" strokeLinejoin="round" />
                     </>
                   )}

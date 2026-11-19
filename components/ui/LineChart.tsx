@@ -87,7 +87,7 @@ export function LineChart({
               {s.name}
             </li>
           ))}
-          {thresholds.map(t=><li key={t.label} style={{color:t.color}}>{t.label} · {format(t.value)}{unit}</li>)}
+          {thresholds.map(t=><li key={t.label} className="flex items-center gap-1.5"><svg width="18" height="6"><line x1="0" x2="18" y1="3" y2="3" stroke={t.color} strokeWidth="2.5" strokeDasharray={t.dashed === false ? undefined : "4 3"} /></svg>{t.label}</li>)}
         </ul>
       )}
       <div ref={wrap} className="relative w-full min-w-0 overflow-hidden">
