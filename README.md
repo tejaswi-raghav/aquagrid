@@ -46,7 +46,7 @@ Local verification passed 47 tests, TypeScript and a production build with `next
 - `services.py`: the three required service names: `read_network_telemetry`, `read_tariff_and_quality_feeds`, `stage_gated_valve_or_setpoint_action`. Reads cannot mutate. Staging cannot execute. No agent execution tool is exposed.
 - `OperationsWorkspace.tsx`: Monitor / Investigate / Decide, connected incident queue, schematic twin, contextual inspector, evidence, Scenario Lab, impact evaluation, planning, approval and replay. The public story is explicitly a read-only narrative preview; public scrolling cannot change applied operational state.
 
-The optimizer uses exact dynamic programming over 50 m³/h controls across ten hours. Storage: `next volume = volume + production − demand − solved loss`. Bounds: 100–800 m³/h production, 35–98% reserve in 10,000 m³, terminal reserve at least the starting reserve. Energy is `p × (2.64 + 120/p + 0.0011p)` kWh, tariffs $0.32 during 14:00–20:00 and $0.12 otherwise. The baseline is the applied schedule; savings can reflect both tariff shifts and a different terminal reserve. Infeasible optimization is omitted, not invented.
+The optimizer uses exact dynamic programming over 50 m³/h controls across ten hours. Storage: `next volume = volume + production − delivered customer demand − solved loss`. Bounds: 100–800 m³/h production, 35–98% reserve in 10,000 m³, terminal reserve at least the starting reserve. Energy is `p × (2.64 + 120/p + 0.0011p)` kWh, tariffs $0.32 during 14:00–20:00 and $0.12 otherwise. The baseline is the applied schedule; savings can reflect both tariff shifts and a different terminal reserve. Infeasible optimization is omitted, not invented.
 
 ## Operational API
 

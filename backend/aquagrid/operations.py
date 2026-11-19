@@ -97,7 +97,7 @@ def analysis(doc,config=None):
 
 def optimize(doc,cfg,hyd):
     # Exact dynamic programming on 50 m³/h controls with terminal reserve >= initial.
-    target_demand=550*cfg['demand_factor'];loss=hyd['leak_m3h']
+    target_demand=sum(hyd['delivered_m3h'].values());loss=hyd['leak_m3h']
     candidates={0:(0.,[])}
     for i in range(10):
         nxt={};tariff=C.tariff_at(14+i)*cfg['tariff_factor']
@@ -116,14 +116,15 @@ def schedule_result(doc,values,cfg,hyd):
     levels=[doc['storage_pct']];rows=[]
     for i,p in enumerate(values):
         demand=550*cfg['demand_factor'];loss=hyd['leak_m3h']
-        levels.append(levels[-1]+(p-demand-loss)/100)
-        rows.append({'hour':f'{(14+i)%24:02}:00','production_m3h':p,'demand_m3h':demand,'loss_m3h':loss,
+        withdrawal=sum(hyd['delivered_m3h'].values())
+        levels.append(levels[-1]+(p-withdrawal-loss)/100)
+        rows.append({'hour':f'{(14+i)%24:02}:00','production_m3h':p,'demand_m3h':demand,'loss_m3h':loss,'withdrawal_m3h':withdrawal,
                      'tariff':C.tariff_at(14+i)*cfg['tariff_factor'],'cost':p*C.specific_energy_kwh_m3(p)*C.tariff_at(14+i)*cfg['tariff_factor']})
     checks=[{'id':'reserve','passed':min(levels)>=35,'detail':f'Minimum {min(levels):.2f}% ≥ 35% floor'},
             {'id':'capacity','passed':max(levels)<=98,'detail':'Storage ≤ 98% capacity'},
             {'id':'production','passed':all(100<=p<=800 for p in values),'detail':'RO production in 100–800 m³/h envelope'},
-            {'id':'quality','passed':not cfg['quality_warning'] or values==doc['production'],'detail':'Unresolved intake warning blocks production changes'},
-            {'id':'service','passed':not cfg['pump_failed'],'detail':'Transmission supply must be available'},
+            {'id':'quality','passed':not cfg['quality_warning'] or values==doc['production'],'detail':'Intake warning clear or production unchanged'},
+            {'id':'service','passed':not cfg['pump_failed'] and hyd['unserved_m3h']<=15,'detail':'Transmission available and unserved demand ≤ 15 m³/h'},
             {'id':'terminal_reserve','passed':values==doc['production'] or levels[-1]>=doc['storage_pct'],'detail':f'New schedules must restore starting reserve ({doc["storage_pct"]:.1f}%) by midnight'}]
     return {'production':values,'levels':levels,'rows':rows,'minimum_pct':min(levels),'cost_usd':round(sum(r['cost'] for r in rows),2),
             'checks':checks,'eligible':all(c['passed'] for c in checks),
@@ -170,7 +171,9 @@ def validate_action(doc,action):
 
 class Operations:
     def __init__(self,repository=None):self.repo=repository or Repository()
-    def create(self):return self.repo.create(new_document())
+    def create(self):
+        from_config(Config().model_dump())  # Validate solver availability before allocating storage.
+        return self.repo.create(new_document())
     def read_network_telemetry(self,id):
         doc=self.repo.read(id);return self.enrich(doc)
     def read_tariff_and_quality_feeds(self,id):

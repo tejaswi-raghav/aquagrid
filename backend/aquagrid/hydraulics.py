@@ -30,7 +30,11 @@ def solve(leak=0.0,demand_factor=1.0,pump_failed=False,closed=()):
     # actual loss is solved from local pressure, not forced to 65 m³/h.
     if leak>0: wn.get_node('BR-4H').emitter_coefficient=leak/3600/(30**.5)
     with tempfile.TemporaryDirectory(prefix='aquagrid-epanet-') as temp:
-        result=wntr.sim.EpanetSimulator(wn).run_sim(file_prefix=os.path.join(temp,'network'))
+        # EPANET otherwise creates its scratch hydraulics in the current working
+        # directory, which is read-only on Vercel. SAVE uses this explicit /tmp path.
+        wn.options.hydraulic.hydraulics='SAVE'
+        wn.options.hydraulic.hydraulics_filename=os.path.join(temp,'network.hyd')
+        result=wntr.sim.EpanetSimulator(wn).run_sim(file_prefix=os.path.join(temp,'network'),convergence_error=True)
     pressures={n:round(max(0,float(result.node['pressure'].iloc[0][n]))/10.1972,3) for n in DEMANDS}
     flows={p:round(float(result.link['flowrate'].iloc[0][p])*3600,3) for p,*_ in PIPES}
     # In EPANET emitter flow is included in node demand.
