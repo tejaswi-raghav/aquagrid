@@ -134,7 +134,7 @@ export function ExplodedView() {
         </div>
 
         {/* Toolbar */}
-        <div className="system-toolbar flex flex-wrap items-center justify-between gap-3 border-t border-white/15 px-4 py-3 sm:px-8">
+        <div className="system-toolbar flex flex-wrap items-center justify-between gap-3 border-t border-black/15 px-4 py-3 sm:px-8">
           <div className="flex flex-wrap items-center gap-2">
             <button type="button" className="btn btn-primary btn-sm" onClick={toggleExplode} disabled={!use3d}>
               {exploded ? "Collapse layers" : "Separate layers"}
@@ -153,20 +153,20 @@ export function ExplodedView() {
                 <button type="button" className="tool max-sm:hidden" aria-pressed={explore} aria-label="Scroll-wheel zoom" title="Let the mouse wheel zoom the model" onClick={() => setExplore((v) => !v)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M12 7v4" stroke="currentColor" strokeWidth="1.8" /></svg>
                 </button>
-                <button type="button" className="btn btn-ghost btn-sm text-white" onClick={() => { setShotKey(`home-${Date.now()}`); setSelected(null); }}>
+                <button type="button" className="btn btn-ghost btn-sm text-black" onClick={() => { setShotKey(`home-${Date.now()}`); setSelected(null); }}>
                   Reset view
                 </button>
               </>
             )}
             {webgl !== false && (
-              <button type="button" className="btn btn-ghost btn-sm text-white" aria-pressed={flat} onClick={() => setFlat((v) => !v)}>
+              <button type="button" className="btn btn-ghost btn-sm text-black" aria-pressed={flat} onClick={() => setFlat((v) => !v)}>
                 {flat ? "3D view" : "2D view"}
               </button>
             )}
           </div>
         </div>
         {webgl === false && (
-          <p className="absolute left-4 top-20 rounded bg-[var(--color-paper)] px-3 py-2 text-[14px] text-white">This browser can’t show 3D, so you’re seeing the 2D section view.</p>
+          <p className="absolute left-4 top-20 rounded bg-[var(--color-paper)] px-3 py-2 text-[14px] text-black">This browser can’t show 3D, so you’re seeing the 2D section view.</p>
         )}
       </div>
     </section>

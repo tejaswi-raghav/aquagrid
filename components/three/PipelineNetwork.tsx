@@ -85,7 +85,7 @@ function FlowPipe({ edge, pts, r }: FlowPipeProps) {
     u.uSpeed.value = reducedMotion ? 0 : 0.18 + Math.min(m3h, 1300) / 900;
     u.uTime.value += dt;
     u.uActive.value = isolated || !state ? 0 : 1;
-    (u.uFlow.value as THREE.Color).set(leaking ? COLORS.red : feedsLeak ? "#9cc8f3" : COLORS.blue);
+    (u.uFlow.value as THREE.Color).set(leaking ? COLORS.red : feedsLeak ? "#62a7ea" : COLORS.blue);
     (u.uColor.value as THREE.Color).set(leaking ? "#b9898e" : isolated ? COLORS.grey : COLORS.steel);
   });
 

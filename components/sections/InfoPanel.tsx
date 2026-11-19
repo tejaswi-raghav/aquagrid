@@ -5,7 +5,7 @@ import { ASSET_NAMES, ASSET_ROLE } from "@/lib/assets";
 import { ASSET_POS, LAYERS } from "@/lib/world";
 import { Figure, StatusChip } from "@/components/ui/bits";
 
-function Spark({ values, color = "#2a78d6" }: { values: number[]; color?: string }) {
+function Spark({ values, color = "#03045e" }: { values: number[]; color?: string }) {
   const lo = Math.min(...values), hi = Math.max(...values), span = hi - lo || 1;
   const d = values.map((v, i) => `${i ? "L" : "M"}${(i / (values.length - 1)) * 200},${38 - ((v - lo) / span) * 34}`).join("");
   return <svg viewBox="0 0 200 40" className="h-10 w-full" aria-hidden="true"><path d={d} fill="none" stroke={color} strokeWidth="2" /></svg>;
@@ -95,7 +95,7 @@ export function InfoPanel({ selected, state, onSelect, onClose }: {
         </div>
         {sensor && (
           <div className="mt-3">
-            <Spark values={sensor.series.map((p) => p.v)} color={sensor.status === "normal" ? "#2a78d6" : "#e8892b"} />
+            <Spark values={sensor.series.map((p) => p.v)} color={sensor.status === "normal" ? "#03045e" : "#c2410c"} />
             <div className="flex justify-between text-[11.5px] text-[var(--color-muted)]"><span>{sensor.series[0].t}</span><span>{sensor.series.at(-1)?.t}</span></div>
           </div>
         )}
@@ -104,7 +104,7 @@ export function InfoPanel({ selected, state, onSelect, onClose }: {
   }
 
   return (
-    <aside aria-live="polite" className="w-full max-w-[380px] rounded-xl bg-[var(--color-paper)] p-5 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
+    <aside aria-live="polite" className="w-full max-w-[380px] rounded-xl bg-[var(--color-paper)] p-5 text-black shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[13px] text-[var(--color-muted)]">{overline}</div>

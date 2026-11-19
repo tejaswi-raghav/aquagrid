@@ -93,7 +93,7 @@ export function StoryControl({ onLock, onOperationalState }: {
         {pending ? `Closing ${proposal.action.valve_id} passes the safety checks. The valve stays open until a Control-Room Operator approves.` : "This proposal cannot execute. Review its checks; refresh evidence and stage again if the record has expired."}
       </Verdict>
       <ul className="space-y-2 text-[14px]" aria-label="Inline valve safety checks">
-        {proposal.safety.checks.map(check => <li key={check.id} className="flex items-start gap-2"><span className={check.passed ? "text-[#62d5a1]" : "text-[#ff9297]"}>{check.passed ? "✓" : "×"}</span><span>{check.detail}</span></li>)}
+        {proposal.safety.checks.map(check => <li key={check.id} className="flex items-start gap-2"><span className={check.passed ? "text-[#05603a]" : "text-[#ff9297]"}>{check.passed ? "✓" : "×"}</span><span>{check.detail}</span></li>)}
       </ul>
     </div>}
 

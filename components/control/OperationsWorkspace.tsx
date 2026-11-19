@@ -16,7 +16,8 @@ const empty: LabConfig = { leak: 0, pump_failed: false, sensor: "healthy", deman
 const clock = (t: number) => new Date(t * 1000).toLocaleString();
 const num = (n: number) => n.toFixed(1);
 const HOURS = ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "00"];
-const C = { blue: "#62a7ea", yellow: "#fff44f", ref: "#8fa3c7", red: "#ff6b6f", amber: "#f0a24a" };
+// Chart marks on cyan: deep navy and white contrast with the surface and with each other.
+const C = { blue: "#03045e", yellow: "#ffffff", ref: "#08323d", red: "#b3001b", amber: "#7c2d12" };
 
 type Mode = "monitor" | "investigate" | "decide";
 const MODES: [Mode, string, string][] = [

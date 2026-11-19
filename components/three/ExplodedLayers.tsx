@@ -37,7 +37,7 @@ export function LayerGroup({ layer, children }: { layer: number; children: React
 export function LayerPlate({ layer }: { layer: number }) {
   const { explode } = useTwin();
   const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.navy3, transparent: true, opacity: 0, depthWrite: false }), []);
-  const edge = useMemo(() => new THREE.LineBasicMaterial({ color: COLORS.blue, transparent: true, opacity: 0 }), []);
+  const edge = useMemo(() => new THREE.LineBasicMaterial({ color: COLORS.deep, transparent: true, opacity: 0 }), []);
   const edges = useMemo(() => new THREE.EdgesGeometry(new THREE.BoxGeometry(SITE.x1 - SITE.x0, 0.1, SITE.z1 - SITE.z0)), []);
   const ref = useRef<THREE.Group>(null);
 
@@ -62,7 +62,7 @@ export function LayerPlate({ layer }: { layer: number }) {
 /** Vertical links that keep the exploded layers visibly connected. */
 export function Risers() {
   const { explode, focusLayer } = useTwin();
-  const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.blue, transparent: true, opacity: 0, depthWrite: false }), []);
+  const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.deep, transparent: true, opacity: 0, depthWrite: false }), []);
   const refs = useRef<(THREE.Mesh | null)[]>([]);
   useFrame(() => {
     const e = explode.current;
@@ -91,9 +91,9 @@ export function Risers() {
 
 export function Ground() {
   const mats = useMemo(() => ({
-    land: std("#1b2f6b", { opacity: 0.86, roughness: 1 }),
+    land: std("#0b8aa6", { opacity: 0.9, roughness: 1 }),
     beach: std("#c9b98f", { roughness: 1 }),
-    road: std("#2a3f80", { roughness: 1 }),
+    road: std("#05708a", { roughness: 1 }),
   }), []);
   return (
     <group>
@@ -109,7 +109,7 @@ export function Ground() {
 export function Sea() {
   const mats = useMemo(() => ({
     sea: std(COLORS.sea, { opacity: 0.7, roughness: 0.85, metalness: 0 }),
-    bed: std("#0f2559", { roughness: 1 }),
+    bed: std("#03587a", { roughness: 1 }),
   }), []);
   return (
     <group>
