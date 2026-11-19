@@ -28,8 +28,9 @@ export function Logo() {
 
 const LINKS = [
   { href: "/#system", label: "The system" },
+  { href: "/#concept", label: "How it works" },
+  { href: "/#incident", label: "The incident" },
   { href: "/plant", label: "Desalination plant" },
-  { href: "/control", label: "Control centre" },
 ];
 
 export function SiteHeader() {
