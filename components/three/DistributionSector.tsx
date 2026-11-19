@@ -85,13 +85,8 @@ export function DistributionSector({ id }: { id: string }) {
           </instancedMesh>
         </group>
       </Asset>
-      {showLabels && (
-        <Html position={[centre[0], 0.2, centre[2]]} center zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
-          <div className="whitespace-nowrap text-[12px] font-[640] tracking-[0.01em] text-white/85 [text-shadow:0_1px_6px_rgba(12,27,72,0.9)]">
-            {id.replace("SEC-0", "Sector ")}
-          </div>
-        </Html>
-      )}
+      {/* Sector names are shown in the selected-asset inspector rather than
+          simultaneously projected onto the same skyline. */}
     </group>
   );
 }

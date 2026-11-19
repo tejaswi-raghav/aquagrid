@@ -24,7 +24,7 @@ interface Props {
   xTickEvery?: number;
 }
 
-const PAD = { l: 44, r: 118, t: 14, b: 28 };
+const PAD = { l: 44, r: 18, t: 14, b: 28 };
 
 export function LineChart({
   title, x, series, unit = "", yMin, yMax, thresholds = [], marker, band, bandLabel, step, height = 220,
@@ -75,15 +75,11 @@ export function LineChart({
     setHover(Math.round(Math.min(1, Math.max(0, px / r.width)) * (n - 1)));
   };
 
-  // Direct end labels, nudged apart so they never collide.
-  const ends = series.map((s) => ({ name: s.name, color: s.color, y: sy(s.values[s.values.length - 1]) }))
-    .sort((a, b) => a.y - b.y);
-  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
 
   return (
     <figure className="w-full min-w-0">
       {title && <figcaption className="mb-2 text-[14px] font-[640]">{title}</figcaption>}
-      {series.length > 1 && (
+      {(series.length > 0 || thresholds.length > 0) && (
         <ul className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-[var(--color-muted)]" aria-hidden="true">
           {series.map((s) => (
             <li key={s.name} className="flex items-center gap-1.5">
@@ -91,6 +87,7 @@ export function LineChart({
               {s.name}
             </li>
           ))}
+          {thresholds.map(t=><li key={t.label} style={{color:t.color}}>{t.label} · {format(t.value)}{unit}</li>)}
         </ul>
       )}
       <div ref={wrap} className="relative w-full min-w-0 overflow-hidden">
@@ -109,23 +106,18 @@ export function LineChart({
             </g>
           ))}
           {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#b7c8e3">{unit}</text>}
-          {x.map((lbl, i) => (i % every === 0 || i === n - 1) && (
+          {x.map((lbl, i) => ((i % every === 0 && (n-1-i>=every*.7)) || i === n - 1) && (
             <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#b7c8e3">{lbl}</text>
           ))}
           {thresholds.map((t) => (
             <g key={t.label}>
               <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t.value)} y2={sy(t.value)} stroke={t.color} strokeWidth="1.5" strokeDasharray={t.dashed === false ? undefined : "6 4"} />
-              <text x={PAD.l + iw + 6} y={sy(t.value) + 4} fontSize="11.5" fill="#ffffff" fontWeight="600">{t.label}</text>
+
             </g>
           ))}
           {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#ffffff" strokeWidth="1.5" />}
           {series.map((s) => (
             <path key={s.name} d={path(s.values)} fill="none" stroke={s.color} strokeWidth="2.25" strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? "6 4" : undefined} />
-          ))}
-          {series.length <= 4 && ends.map((e) => (
-            <text key={e.name} x={PAD.l + iw + 6} y={e.y + 4} fontSize="12" fill="#ffffff">
-              <tspan fill={e.color}>●</tspan> {e.name.length > 17 ? e.name.slice(0, 16) + "…" : e.name}
-            </text>
           ))}
           {hover !== null && (
             <g pointerEvents="none">

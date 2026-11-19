@@ -35,7 +35,7 @@ export function ExplodedView() {
   const [narr, setNarr] = useState<number | null>(null);
   const [intro, setIntro] = useState(true);
   const [exploded, setExploded] = useState(false);
-  const [labels, setLabels] = useState(true);
+  const labels = false;
   const [explore, setExplore] = useState(false);
   const [shotKey, setShotKey] = useState("home");
   const manual = useRef(false);
@@ -108,7 +108,7 @@ export function ExplodedView() {
         {/* Narrative overlay */}
         <div className="pointer-events-none absolute inset-x-0 bottom-36 px-5 sm:bottom-28 sm:px-10">
           <AnimatePresence mode="wait">
-            {intro ? (
+            {selected ? null : intro ? (
               <motion.div key="intro" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: reduced ? 0 : 0.5 }} className="max-w-[46rem]">
                 <h1 id={intro ? "hero-title" : undefined} className="type-display">The city beneath the city.</h1>
                 <p className="mt-5 max-w-[34rem] text-[1.125rem] leading-relaxed text-white/85">
@@ -133,7 +133,7 @@ export function ExplodedView() {
               key="panel"
               initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }}
               transition={{ duration: reduced ? 0 : 0.28 }}
-              className="absolute right-4 top-20 z-20 w-[calc(100%-2rem)] max-w-[380px] sm:right-8 sm:top-24"
+              className="absolute max-h-[calc(100svh-180px)] overflow-y-auto right-4 top-20 z-20 w-[calc(100%-2rem)] max-w-[380px] sm:right-8 sm:top-24"
             >
               <InfoPanel selected={selected} state={state} onSelect={setSelected} onClose={() => setSelected(null)} />
             </motion.div>
@@ -146,6 +146,7 @@ export function ExplodedView() {
             <button type="button" className="btn btn-primary btn-sm" onClick={toggleExplode} disabled={!use3d}>
               {exploded ? "Collapse layers" : "Separate layers"}
             </button>
+            <select aria-label="Select infrastructure layer" className="md:hidden max-w-[150px] rounded border border-white/20 bg-[#0c1b48] p-2 text-[13px]" value={selected?.startsWith('layer:')?selected.slice(6):''} onChange={e=>setSelected(e.target.value?`layer:${e.target.value}`:null)}><option value="">Inspect layer</option>{LAYERS.map(l=><option key={l.id} value={l.id}>{l.short}</option>)}</select>
             <div role="group" aria-label="Layers" className="hidden items-center gap-1 md:flex">
               {LAYERS.map((l) => (
                 <button
@@ -171,9 +172,6 @@ export function ExplodedView() {
                 </button>
                 <button type="button" className="tool max-sm:hidden" aria-pressed={explore} aria-label="Scroll-wheel zoom" title="Let the mouse wheel zoom the model" onClick={() => setExplore((v) => !v)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M12 7v4" stroke="currentColor" strokeWidth="1.8" /></svg>
-                </button>
-                <button type="button" className="tool max-sm:hidden" aria-pressed={labels} aria-label="Sector labels" onClick={() => setLabels((v) => !v)}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" strokeWidth="1.8" /></svg>
                 </button>
                 <button type="button" className="btn btn-ghost btn-sm text-white" onClick={() => { setShotKey(`home-${Date.now()}`); setSelected(null); }}>
                   Reset view

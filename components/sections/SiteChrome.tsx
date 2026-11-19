@@ -28,9 +28,8 @@ export function Logo() {
 
 const LINKS = [
   { href: "/#system", label: "The system" },
-  { href: "/#incident", label: "The incident" },
-  { href: "/#desalination", label: "Desalination" },
-  { href: "/#storage", label: "Storage" },
+  { href: "/plant", label: "Desalination plant" },
+  { href: "/control", label: "Control centre" },
 ];
 
 export function SiteHeader() {
@@ -51,7 +50,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           <span className="hidden items-center gap-2 text-[13px] sm:flex" role="status">
             <span className={`h-2.5 w-2.5 rounded-full ${offline ? "bg-[var(--color-red)]" : state ? "bg-[var(--color-green)]" : "bg-[var(--color-line)]"}`} aria-hidden="true" />
-            {offline ? "Engine offline" : state ? `Engine live, ${state.scene.clock}` : "Connecting"}
+            {offline ? "Engine offline" : state ? `Story preview, ${state.scene.clock}` : "Connecting"}
           </span>
           <a href={path === "/control" ? "/" : "/control"} className="btn btn-primary btn-sm">
             {path === "/control" ? "Back to the story" : "Control room"}
@@ -80,7 +79,7 @@ export function SiteFooter() {
             <li>All telemetry is synthetic and deterministic. Every operational value on these pages is computed by the Python simulation engine; the browser only draws it.</li>
             <li>Storage follows next volume = volume + production − demand − modelled loss, hourly, over 10,000 m³ with an illustrative 35% floor.</li>
             <li>Energy uses a plant curve calibrated to 3.5 kWh/m³ at 600 m³/h, with illustrative tariffs of $0.32 (14:00–20:00) and $0.12/kWh.</li>
-            <li>Valve control is simulated. Proposals and valve states are signed by the backend; nothing connects to a real actuator, PLC or SCADA system.</li>
+            <li>The narrative is a read-only preview. Control-room decisions are persisted with server-enforced checks and human authorization; nothing connects to a real actuator, PLC or SCADA system.</li>
           </ul>
         </div>
       </div>

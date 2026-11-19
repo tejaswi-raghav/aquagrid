@@ -148,6 +148,11 @@ def handle(method, raw_path, raw_body=b""):
     path = url.path.rstrip("/") or "/"
     if method == "OPTIONS":
         return 204, {}
+    if path.startswith('/api/ops/'):
+        from .operations_api import dispatch
+        return dispatch(method,path,raw_body)
+    if path in ('/api/valves/stage','/api/valves/approve'):
+        return 410, {'error':'Legacy stateless controls retired. Use /api/ops staging and operator decision gateway.'}
     fn = ROUTES.get((method, path))
     if fn is None:
         known = {p for _, p in ROUTES}

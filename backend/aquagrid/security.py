@@ -81,6 +81,7 @@ def read_token(token, now=None):
 
 
 def require_approver(token, now=None):
+    if os.getenv("VERCEL") and USING_DEV_SECRET:raise AuthError("Production signing key is not configured; privileged actions disabled.",503)
     payload = read_token(token, now)
     if payload["role"] not in APPROVER_ROLES:
         raise AuthError(f"{payload['name']} is signed in but does not hold Control-Room approval authority.", 403)

@@ -1,1 +1,3 @@
-# The simulation engine uses the Python standard library only.
+pydantic==2.14.3
+wntr==1.5.0
+six==1.17.0

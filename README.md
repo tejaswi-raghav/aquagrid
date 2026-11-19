@@ -1,74 +1,79 @@
-# AquaGrid — The city beneath the city
+# AquaGrid
 
-An interactive digital twin of a Gulf coastal water system. It explains the Water, Energy & Climate Resilience problem visually: how seawater intake, desalination, storage and distribution depend on one another, and what happens when a tariff spike, a burst main, a faulty sensor and an algal bloom arrive in the same twenty minutes.
+A cinematic infrastructure story connected to a persistent, simulation-only operational decision workspace. Three routes: `/` explains the city and compound incident; `/plant` explores the six-stage RO plant; `/control` investigates evidence, compares scenarios and approves changes. The supplied AquaGrid artwork remains the identity. Public pages use navy; operations use the requested industrial teal, gold and off-white palette.
 
-## What's in it
+## Run
 
-| Section | What it shows |
-| --- | --- |
-| **The system** (hero) | A 3D coastal city that separates into five layers as you scroll: city, distribution, storage, desalination, intake. Rotate, pan, zoom, expand or collapse, select any layer or asset for an information panel, reset the camera. A 2D section view is one click away. |
-| **One city. Four disruptions.** | A seven-step walkthrough (13:00 → 14:20) with a sticky 3D view that flies to each incident: tariff spike, Sector 4 leak, P-S4B sensor flatline (cross-checked and quarantined by the backend), algal-bloom warning, the unsafe AI production cut (rejected by the backend), and a human-approved valve isolation. |
-| **Inside the desalination plant** | Exploded six-stage RO plant with a production slider; plant load, specific energy and hourly cost come from the backend energy model. Includes an SWRO process-flow diagram with the energy-recovery loop. |
-| **Storage** | Two transparent reservoirs, baseline vs proposed peak-tariff throttling, with the 35% floor as a physical plane. Play the evening hour by hour. |
-| **Control room** (`/control`) | 2D network twin with search, upstream trace, pan/zoom, flow and label toggles, asset inspector, alerts, three production plans, activity history and session JSON export. |
+Node 22+, Python 3.12 or 3.13:
 
-## Architecture
-
-```
-app/, components/, lib/     Next.js 16 · React 19 · TypeScript · Tailwind 4
-                            React Three Fiber · drei · three · motion · GSAP ScrollTrigger
-backend/aquagrid/           Python simulation engine (standard library only)
-api/index.py                Vercel Python function exposing the engine at /api/*
-backend/dev_server.py       Same engine on http://127.0.0.1:8000 for local development
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+npm ci
+npm run dev:api
+# second terminal, same virtual environment
+npm run dev
 ```
 
-The **Python engine is the only source of operational values**. The browser draws what it returns and never computes reserve levels, verdicts, costs or sensor diagnoses itself. Rendering (`components/three/*`) is separate from operational logic (`backend/aquagrid/*`).
+The Python server listens on 8000. Next.js proxies `/api/*` there. `PORT` changes the API port and `AQUAGRID_API_ORIGIN` changes the proxy target. Local operational state is in `data/operations.sqlite` (gitignored); `AQUAGRID_DB` overrides it.
 
-3D modules: `CoastalCity`, `DesalinationPlant`, `ReservoirSystem`, `PipelineNetwork`, `DistributionSector`, `SensorNode`, `IsolationValve`, `ExplodedLayers`, `IncidentCamera`, plus `ScenarioController` (shared state, wraps the backend client). All geometry is procedural and original; no third-party models or textures.
-
-### API
-
-| Route | Purpose |
-| --- | --- |
-| `GET /api/health` | Engine status |
-| `GET /api/network` | Topology: assets, layers, edges |
-| `POST /api/state` | Full operational state for a scene, given quarantined sensors and signed valve records |
-| `POST /api/sensors/analyze` | Flatline test + neighbour cross-check + Sector 4 flow balance |
-| `POST /api/sensors/quarantine` | Quarantines a sensor only if the analysis shows it is unreliable (409 otherwise) |
-| `POST /api/plans/evaluate` | Reservoir projection and constraint verdict (`ACCEPTED` / `HOLD` / `REJECTED`), plus a backend-derived safe alternative |
-| `GET /api/desal?production=` | RO stages and operating point |
-| `POST /api/auth/login` | Operator sign-in, returns an HMAC-signed session |
-| `POST /api/valves/stage` | Evaluates a valve change and returns a signed, locked proposal (or a rejection) |
-| `POST /api/valves/approve` | Requires a Control-Room Operator, re-validates against current state, returns a signed simulated valve record |
-
-Demo accounts: **CR-07 / 2468** (Control-Room Operator, can approve) and **AN-02 / 1357** (analyst, refused with 403). Override with `AQUAGRID_OPERATOR_PIN`, `AQUAGRID_ANALYST_PIN`; set `AQUAGRID_SECRET` in production.
-
-## Run locally
-
-```bash
-npm install
-npm run dev:api     # terminal 1 — Python engine on :8000
-npm run dev         # terminal 2 — Next.js on :3000 (proxies /api to :8000)
+```sh
+python -m unittest discover -s backend/tests -v
+npm run typecheck
+npm run build
 ```
 
-Tests: `npm run test:api` (engine, 20 tests) and `npm run typecheck`.
+Local verification passed 47 tests, TypeScript and a production build with `next build --webpack`. Turbopack's local CSS worker is blocked by the desktop sandbox's port-binding restriction; webpack produces the supported equivalent Next.js bundle. Vercel uses its normal configured builder.
+
+## Judge walkthrough
+
+1. Open `/control`, sign in using **CR-07 / 2468**. **AN-02 / 1357** is an analyst and cannot approve. Demo identities authorize synthetic assets only.
+2. Trigger the 14:00 disruption. Select the harbour incident. The mass-balance residual is about 65.5 m³/h; P-S4B is separately classified FLATLINE and quarantined. Inspect sensor samples, variance, residual, timestamp, pipe ranking and assumptions.
+3. In Investigate → Scenario Lab, preview leak, pump failure, sensor flatline/drift, demand spike, tariff multiplier or intake warning. Candidate previews never change applied state. Stage and approve a candidate to apply synthetic faults.
+4. In Decide → Production planning, compare the current schedule, calculated optimizer result and unsafe peak throttle. Stage the unsafe plan to retain a blocked proposal. The 35% floor cannot be overridden. A quality warning separately blocks production changes. Reset to baseline for a feasible optimized schedule; stage, review and approve it.
+5. Select V-04A and evaluate impact: disconnecting the hospital is blocked. Select V-04B: the harbour branch loses about 12 m³/h but Sector 4 remains above 2 bar. Stage it; confirm that the current valve stays open until operator approval. Approve and execute **in simulation**.
+6. Decision replay contains input, proposed action, deterministic checks, authorization and outcome. Refresh the browser to verify persistence. Reset retains history. Export the report for a complete JSON snapshot. Direct AI actuator access always returns 403.
+
+## Engineering pipeline
+
+`INGEST → VALIDATE → DETECT → SIMULATE → OPTIMIZE → ENFORCE SAFETY → REQUEST HUMAN APPROVAL → EXECUTE IN SIMULATION → AUDIT`
+
+- `operations.py`: Pydantic requests, deterministic diagnostics, residual-based pipe ranking, schedule optimizer, safety and approval gateway.
+- `hydraulics.py`: reproducible WNTR / EPANET 2.2 pressure-dependent distribution model. Stable nodes, seven pipe links, two controllable isolation links. Pipes use synthetic lengths, diameters, roughness and a 48 m head source. Customer demand totals 550 m³/h; the harbour branch is 12 m³/h within the 110 m³/h Sector 4 total. Leak loss is an emitter solved from pressure, not a forced output.
+- `network.py`: process and distribution asset graph with attached sensor IDs. Graph disconnection and hydraulic consequences are explicitly distinguished. Pump failure closes the modeled supply link; there is no pump curve or transient model.
+- `repository.py`: SQLite transactions locally; private Vercel Blob JSON documents with ETag compare-and-swap in production. Applied state, approval, outcome and audit commit together. Missing durable storage disables hosted operational writes; no serverless SQLite fallback.
+- `services.py`: the three required service names: `read_network_telemetry`, `read_tariff_and_quality_feeds`, `stage_gated_valve_or_setpoint_action`. Reads cannot mutate. Staging cannot execute. No agent execution tool is exposed.
+- `OperationsWorkspace.tsx`: Monitor / Investigate / Decide, connected incident queue, schematic twin, contextual inspector, evidence, Scenario Lab, impact evaluation, planning, approval and replay. The public story is explicitly a read-only narrative preview; public scrolling cannot change applied operational state.
+
+The optimizer uses exact dynamic programming over 50 m³/h controls across ten hours. Storage: `next volume = volume + production − demand − solved loss`. Bounds: 100–800 m³/h production, 35–98% reserve in 10,000 m³, terminal reserve at least the starting reserve. Energy is `p × (2.64 + 120/p + 0.0011p)` kWh, tariffs $0.32 during 14:00–20:00 and $0.12 otherwise. The baseline is the applied schedule; savings can reflect both tariff shifts and a different terminal reserve. Infeasible optimization is omitted, not invented.
+
+## Operational API
+
+All `/api/ops/*` endpoints use JSON POSTs. Mutation requests require `scenario_id` and current `version`. Extra fields, unknown actions, invalid limits and nonfinite controls are rejected. No client-supplied safety verdict or arbitrary production vector is accepted.
+
+| Endpoint | Behavior |
+|---|---|
+| create | Allocate an isolated durable synthetic scenario |
+| read / feeds | Read authoritative telemetry / tariff and quality feeds |
+| preview | Compare candidate and applied state, no write |
+| event | Operator-only disruption, telemetry refresh, quarantine or reset |
+| stage | Record server-derived action, input hash, evidence and checks; pending or blocked |
+| decision | Operator authorization, freshness and safety revalidation, atomic simulated execution |
+| actuate | Always 403; no physical adapter exists |
+
+`/api/auth/login`, `/api/network`, `/api/desal` and read-only narrative APIs remain. Legacy stateless `/api/valves/stage` and `/approve` return 410 so there is one operational gateway.
+
+At approval the server checks operator role, token signature/expiry, scenario version/epoch, pending status, ten-minute proposal lease and five-minute telemetry freshness, and recalculates all safety results. A new sample, reset or staged proposal invalidates prior pending actions. Concurrent approval has one winner. Failed execution rolls back approval and audit as well as state. Replay only inspects stored records.
 
 ## Deploy
 
-`vercel.json` sets the Next.js framework, deploys `api/index.py` as a Python function (bundling `backend/aquagrid`) and rewrites `/api/*` to it. No Python dependencies are needed.
+Vercel builds Next.js and bundles the Python engine via `api/index.py`. `requirements.txt` installs WNTR, Pydantic and dependencies. Configure `AQUAGRID_SECRET` (server-only random signing key) and connect a **private Blob store**, which provides `BLOB_READ_WRITE_TOKEN`. These are never sent to the browser. Demo PINs can be overridden using `AQUAGRID_OPERATOR_PIN` and `AQUAGRID_ANALYST_PIN`.
 
-## Model (illustrative, synthetic)
+## Validation and limits
 
-- Storage: next volume = volume + production − demand − modelled loss, hourly. 10,000 m³ across three reservoirs, 62% at 14:00, 550 m³/h demand, 65 m³/h Sector 4 leak, 35% safety floor.
-- Production: two RO trains, 600 m³/h nominal (100–800 m³/h envelope), 48% recovery. Specific energy = 2.64 + 120/p + 0.0011·p kWh/m³ (3.5 at 600 m³/h).
-- Tariff: $0.32/kWh 14:00–20:00, $0.12/kWh otherwise.
-- Peak-tariff throttling (100 m³/h through the peak) bottoms out at 30.5% and is **rejected**. Shift-to-off-peak passes the floor but is **held** for human review while the bloom warning is open.
-- Leak evidence rests on flow balance and localisation, never on pressure alone. A flatline marks an unreliable channel, not a finding about the water. A bloom warning triggers water-quality assessment, not a contamination verdict.
+The 47 automated tests include all three workflows, seven scenario classes, real EPANET mass balance, leak versus isolated sensor fault, optimizer feasibility, hospital isolation rejection, reserve and quality guards, analyst/forged-token denial, stale state, reset invalidation, concurrent duplicate approval, persistence and execution rollback. Browser verification covers incident selection, valve preview/staging/approval/replay, scheduling and responsive layout. See `VERIFICATION.md` for deployment results.
 
-## Limits
+This is a production-inspired MVP, **not a live utility control system**. Measurements, geometry and forecasts are synthetic and uncalibrated. No LLM provider is connected: the analyst is deterministic and cannot actuate. There is no water-quality transport, transient hydraulics, real SCADA, institutional identity provider, tamper-proof ledger or regulatory certification. Audit is durable application history, not cryptographic immutability. Rooms use unguessable identifiers; demo accounts and room identifiers are not tenant-grade access control.
 
-All telemetry is synthetic and deterministic. There is no EPANET hydraulic solver, LLM or persistent audit store; the activity log lives in the browser tab. Valve control is simulated: nothing connects to a real actuator, PLC or SCADA system.
-
-## Accessibility and performance
-
-Reduced-motion users get instant camera moves and static flow; every 3D view has a 2D alternative and keyboard-operable controls; charts include data tables for screen readers. Buildings and membrane vessels are instanced, materials and geometry are reused, canvases stop rendering when off screen, and there is no post-processing.
+Architectural inspiration, without copied UI/code/assets: [Palantir operational apps](https://www.palantir.com/docs/foundry/app-building/operational-apps), [Bentley WaterSight](https://www.bentley.com/products/openflows-watersight/). Hydraulic reference: [EPA WNTR documentation](https://usepa.github.io/WNTR/hydraulics.html). Persistence: [Vercel Blob SDK](https://vercel.com/docs/vercel-blob/using-blob-sdk).

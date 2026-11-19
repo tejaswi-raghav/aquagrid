@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api, type Topology } from "@/lib/api";
+import { api, type SimState, type Topology } from "@/lib/api";
 import { ASSET_NAMES, ASSET_ROLE, statusLabel } from "@/lib/assets";
 import { useScenario } from "@/components/ScenarioController";
 import { Figure, StatusChip } from "@/components/ui/bits";
@@ -36,19 +36,26 @@ function colour(status?: string) {
   if (status === "warning" || status === "watch" || status === "fault" || status === "flatline") return "#e8892b";
   if (status === "quarantined" || status === "isolated") return "#7d8699";
   if (status === "closed") return "#fff44f";
-  return "#62a7ea";
+  return "#69b9ae";
 }
 
-export function NetworkTwin() {
-  const { state } = useScenario();
+export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideInspector=false}: {
+  operationalState?:SimState; selectedAsset?:string; onAssetSelect?:(id:string)=>void;hideInspector?:boolean;
+}={}) {
+  const { state:storyState } = useScenario();
+  const state=operationalState ?? storyState;
   const [topo, setTopo] = useState<Topology | null>(null);
-  const [selected, setSelected] = useState("RES-02");
+  const [selected, setSelectedRaw] = useState("RES-02");
+  const setSelected=(id:string)=>{setSelectedRaw(id);onAssetSelect?.(id)};
+  useEffect(()=>{if(selectedAsset)setSelectedRaw(selectedAsset)},[selectedAsset]);
   const [query, setQuery] = useState("");
   const [trace, setTrace] = useState(false);
   const [flow, setFlow] = useState(true);
-  const [labels, setLabels] = useState(true);
+  const [labels, setLabels] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const lastFocus = useRef(selectedAsset);
+  useEffect(()=>{if(selectedAsset && lastFocus.current!==selectedAsset){const p=POS[selectedAsset];if(p){setZoom(1.2);setPan({x:490-p[0]*1.2,y:340-p[1]*1.2})}lastFocus.current=selectedAsset}},[selectedAsset]);
   const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   const svg = useRef<SVGSVGElement>(null);
 
@@ -80,7 +87,7 @@ export function NetworkTwin() {
   const flowFor = (from: string, to: string) => state?.flows.find((f) => f.from === from && f.to === to)?.m3h ?? 0;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+    <div className={hideInspector ? "min-w-0" : "grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]"}>
       <div className="on-navy overflow-hidden rounded-2xl bg-[var(--color-navy)] text-white">
         <div className="flex flex-wrap items-center gap-3 border-b border-white/10 p-3">
           <label className="relative min-w-[220px] flex-1">
@@ -120,7 +127,7 @@ export function NetworkTwin() {
           </defs>
           <rect width="980" height="680" fill="url(#dots)" />
           <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}>
-            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#123b80" opacity="0.55" />
+            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#204247" opacity="0.55" />
             {topo?.edges.map((e) => {
               const a = POS[e.from], b = POS[e.to];
               if (!a || !b) return null;
@@ -155,11 +162,11 @@ export function NetworkTwin() {
                     <circle r="7" fill={colour(st)} stroke="#0c1b48" strokeWidth="2" />
                   ) : (
                     <>
-                      <circle r="23" fill="#0c1b48" stroke={colour(st)} strokeWidth="2" />
+                      <circle r="23" fill="#12282c" stroke={colour(st)} strokeWidth="2" />
                       <path d={glyph(a.type)} fill="none" stroke={colour(st)} strokeWidth="1.6" strokeLinejoin="round" />
                     </>
                   )}
-                  {labels && <text y={isSensor ? -12 : 40} textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="600">{a.id}</text>}
+                  {((labels && !isSensor) || selected === a.id) && <text y={isSensor ? -12 : 40} textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="600">{a.id}</text>}
                 </g>
               );
             })}
@@ -167,7 +174,7 @@ export function NetworkTwin() {
         </svg>
       </div>
 
-      <aside className="rounded-2xl border border-[var(--color-line)] p-5" aria-live="polite">
+      {!hideInspector && <aside className="rounded-2xl border border-[var(--color-line)] p-5" aria-live="polite">
         {sel ? (
           <>
             <p className="text-[13px] text-[var(--color-muted)]">{sel.id}, {sel.type}</p>
@@ -190,7 +197,7 @@ export function NetworkTwin() {
             <button type="button" className="btn btn-ghost btn-sm mt-5" onClick={() => setTrace((t) => !t)}>{trace ? "Clear upstream trace" : "Trace where its water comes from"}</button>
           </>
         ) : <p>Select an asset on the map.</p>}
-      </aside>
+      </aside>}
     </div>
   );
 }
