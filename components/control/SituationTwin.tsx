@@ -50,7 +50,7 @@ export function SituationTwin({ state, selected, onSelect, lockedValve, active =
       <TwinCanvas twin={twin} active={inView && active} label="Live 3D model of the operational scenario" initial={{ pos: EXPLODED_SHOT.pos }}>
         <ExplodeDriver />
         <ViewBridge apiRef={view} />
-        <IncidentCamera shot={shot} shotKey={`${selected}-${exploded}-${follow}-${resetKey}`} reducedMotion={!!reduced} duration={1.6} />
+        <IncidentCamera shot={shot} shotKey={`${selected}-${exploded}-${follow}-${resetKey}`} reducedMotion={!!reduced} duration={1.6} fitViewport={1.3} />
         <CoastalCity />
       </TwinCanvas>
 
