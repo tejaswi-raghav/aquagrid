@@ -38,7 +38,7 @@ const PATH = "M40 180 C 120 180, 140 120, 220 120 S 340 170, 420 150 S 540 90, 6
 const STOPS = [0.04, 0.24, 0.43, 0.66, 0.98];
 
 function Icon({ k, active }: { k: string; active: boolean }) {
-  const s = active ? "#000" : "#62a7ea";
+  const s = active ? "#000" : "#03045e";
   const common = { fill: "none", stroke: s, strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   switch (k) {
     case "sea": return <g {...common}><path d="M-14 2q7-7 14 0t14 0" /><path d="M-14 9q7-7 14 0t14 0" /><path d="M0-14v10" /></g>;
@@ -91,13 +91,13 @@ export function SeaToTap() {
   return (
     <section id="concept" ref={ref} aria-labelledby="concept-title" className="relative h-[460vh]">
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden pt-16">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_420px_at_70%_40%,rgba(98,167,234,0.16),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_420px_at_70%_40%,rgba(255,255,255,0.28),transparent_70%)]" />
         <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-10">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <h2 id="concept-title" className="type-h2 max-w-[16ch]">From the sea to your tap, in five steps.</h2>
             <ol className="flex gap-1.5" aria-label="Steps">
               {STAGES.map((s, i) => (
-                <li key={s.key} className={`rounded-full px-3 py-1.5 text-[13px] font-[640] transition-colors duration-300 ${i === active ? "bg-[var(--color-yellow)] text-black" : i < active ? "bg-[var(--color-navy-3)] text-white" : "text-white/55"}`}>
+                <li key={s.key} className={`rounded-full px-3 py-1.5 text-[13px] font-[640] transition-colors duration-300 ${i === active ? "bg-[var(--color-yellow)] text-black" : i < active ? "bg-[var(--color-navy-3)] text-black" : "text-black/55"}`}>
                   {s.label}
                 </li>
               ))}
@@ -108,25 +108,25 @@ export function SeaToTap() {
             <svg viewBox="0 0 1000 260" className="h-auto w-full overflow-visible">
               <defs>
                 <linearGradient id="seawater" x1="0" x2="1">
-                  <stop offset="0" stopColor="#2f7fd0" />
-                  <stop offset="1" stopColor="#62a7ea" />
+                  <stop offset="0" stopColor="#03045e" />
+                  <stop offset="1" stopColor="#023e8a" />
                 </linearGradient>
                 <filter id="dropglow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" /></filter>
               </defs>
-              <rect x="0" y="150" width="150" height="110" fill="#123b80" opacity="0.55" rx="6" />
-              <path d={PATH} fill="none" stroke="#24397a" strokeWidth="14" strokeLinecap="round" />
+              <rect x="0" y="150" width="150" height="110" fill="#0077b6" opacity="0.55" rx="6" />
+              <path d={PATH} fill="none" stroke="#90e0ef" strokeOpacity="0.8" strokeWidth="14" strokeLinecap="round" />
               <motion.path ref={pathRef} d={PATH} fill="none" stroke="url(#seawater)" strokeWidth="14" strokeLinecap="round" style={{ pathLength: drawn }} />
-              <circle cx={drop.x} cy={drop.y} r="14" fill="#62a7ea" opacity="0.6" filter="url(#dropglow)" />
-              <circle cx={drop.x} cy={drop.y} r="6" fill="#fff" />
+              <circle cx={drop.x} cy={drop.y} r="14" fill="#ffffff" opacity="0.85" filter="url(#dropglow)" />
+              <circle cx={drop.x} cy={drop.y} r="6" fill="#ffffff" stroke="#03045e" strokeWidth="2" />
               {STAGES.map((s, i) => {
                 const p = pathRef.current && len > 1 ? pathRef.current.getPointAtLength(STOPS[i] * len) : { x: 40 + i * 230, y: 150 };
                 const on = i <= active;
                 return (
                   <g key={s.key} transform={`translate(${p.x} ${p.y - 58})`}>
-                    <line x1="0" y1="26" x2="0" y2="50" stroke={on ? "#62a7ea" : "#24397a"} strokeWidth="2" strokeDasharray="3 4" />
-                    <motion.circle r="26" initial={false} animate={{ scale: i === active ? 1.12 : 1 }} fill={i === active ? "#fff44f" : on ? "#16285f" : "#0c1b48"} stroke={on ? "#62a7ea" : "#24397a"} strokeWidth="2" />
+                    <line x1="0" y1="26" x2="0" y2="50" stroke={on ? "#03045e" : "#0587a3"} strokeWidth="2" strokeDasharray="3 4" />
+                    <motion.circle r="26" initial={false} animate={{ scale: i === active ? 1.12 : 1 }} fill={i === active ? "#fff44f" : on ? "#caf0f8" : "#48cae4"} stroke={on ? "#03045e" : "#0587a3"} strokeWidth="2" />
                     <Icon k={s.key} active={i === active} />
-                    <text y="-38" textAnchor="middle" fill={on ? "#fff" : "#8fa3c7"} fontSize="15" fontWeight="650">{s.label}</text>
+                    <text y="-38" textAnchor="middle" fill={on ? "#000" : "#0b4a5a"} fontSize="15" fontWeight="650">{s.label}</text>
                   </g>
                 );
               })}
@@ -138,14 +138,14 @@ export function SeaToTap() {
               <motion.div key={stage.key} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }}>
                 <p className="text-[14px] font-[640] text-[var(--color-blue)]">Step {active + 1} of 5</p>
                 <h3 className="type-h2 mt-2 text-[clamp(1.6rem,2.8vw,2.5rem)]">{stage.title}</h3>
-                <p className="measure mt-4 text-[1.0625rem] leading-relaxed text-white/85">{stage.body}</p>
+                <p className="measure mt-4 text-[1.0625rem] leading-relaxed text-black/85">{stage.body}</p>
               </motion.div>
             </AnimatePresence>
             <AnimatePresence mode="wait">
               <motion.div key={stage.key + "-fig"} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, delay: 0.05 }}
                 className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-navy-2)] p-6">
-                <div className="type-figure text-[clamp(2.6rem,5vw,4rem)] leading-none text-[var(--color-yellow)]">{stage.figure}</div>
-                <div className="mt-2 text-[15px] text-white/80">{stage.unit}</div>
+                <div className="type-figure text-[clamp(2.6rem,5vw,4rem)] leading-none text-[var(--color-blue-deep)]">{stage.figure}</div>
+                <div className="mt-2 text-[15px] text-black/80">{stage.unit}</div>
                 <div className="mt-5 flex items-center gap-2 border-t border-[var(--color-line)] pt-4 text-[14px]">
                   <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--color-amber)]" aria-hidden="true" />
                   <span><b className="font-[640]">What can go wrong:</b> {stage.risk}</span>

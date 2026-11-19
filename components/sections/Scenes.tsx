@@ -85,7 +85,7 @@ export function SceneLeak({ s }: { s: SimState }) {
         title="Sector 4 inflow against expected demand"
         x={fm.series.map((p) => p.t)} unit="m³/h"
         series={[{ name: "Inflow FM-S4", values: fm.series.map((p) => p.v), color: SERIES.s1 }]}
-        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#c1d2eb" }] : []}
+        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#000000" }] : []}
         format={(v) => v.toFixed(0)} height={180}
       />
       <LineChart
@@ -186,7 +186,7 @@ export function SceneBloom({ s }: { s: SimState }) {
         title="Chlorophyll-a at the intake"
         x={chl.series.map((p) => p.t)} unit="µg/L" yMin={0}
         series={[{ name: "CHL-01", values: chl.series.map((p) => p.v), color: SERIES.s2 }]}
-        thresholds={[{ value: chl.thresholds.warning ?? 7, label: "Warning", color: "#e8892b" }]}
+        thresholds={[{ value: chl.thresholds.warning ?? 7, label: "Warning", color: "#c2410c" }]}
         height={180}
       />
       <table className="w-full text-left text-[14px]">
@@ -257,7 +257,7 @@ export function SceneDecision({ s, active, onProjection }: { s: SimState; active
               { name: "Baseline", values: ev.baseline.levels_pct, color: SERIES.reference, dashed: true },
               { name: "Peak throttling", values: p.levels_pct, color: SERIES.s1 },
             ]}
-            thresholds={[{ value: p.floor_pct, label: `${p.floor_pct}% floor`, color: "#d33a3f", dashed: false }]}
+            thresholds={[{ value: p.floor_pct, label: `${p.floor_pct}% floor`, color: "#b3001b", dashed: false }]}
             band={[0, 6]} bandLabel="Peak tariff" format={(v) => v.toFixed(1)} height={220}
           />
           <div className="grid grid-cols-2 gap-5">

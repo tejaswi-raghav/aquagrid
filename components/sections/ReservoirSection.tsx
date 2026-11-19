@@ -28,17 +28,17 @@ function ScenarioTank({ x, plan, hour, reduced }: { x: number; plan: PlanResult;
         <circleGeometry args={[R + 1.2, 64]} />
       </mesh>
       <Html position={[-R - 0.6, H * 0.85, 0]} center zIndexRange={[20, 5]} style={{ pointerEvents: "none" }}>
-        <div className="-translate-x-1/2 whitespace-nowrap rounded bg-[rgba(12,27,72,0.85)] px-2 py-1 text-[12px] text-white">
+        <div className="-translate-x-1/2 whitespace-nowrap rounded bg-[rgba(144,224,239,0.85)] px-2 py-1 text-[12px] text-black">
           In <b>{row.production_m3h}</b> m³/h
         </div>
       </Html>
       <Html position={[R + 0.6, 1.4, 0]} center zIndexRange={[20, 5]} style={{ pointerEvents: "none" }}>
-        <div className="translate-x-1/2 whitespace-nowrap rounded bg-[rgba(12,27,72,0.85)] px-2 py-1 text-[12px] leading-snug text-white">
+        <div className="translate-x-1/2 whitespace-nowrap rounded bg-[rgba(144,224,239,0.85)] px-2 py-1 text-[12px] leading-snug text-black">
           Out <b>{row.demand_m3h}</b> m³/h{row.loss_m3h > 0 && <><br />Leak <b>{row.loss_m3h}</b> m³/h</>}
         </div>
       </Html>
       <Html position={[R + 1.6, 0.1 + (plan.floor_pct / 100) * (H - 0.2), 0]} zIndexRange={[20, 5]} style={{ pointerEvents: "none" }}>
-        <div className="-translate-y-1/2 whitespace-nowrap text-[12px] font-[680] text-[#ffb3b3]">{plan.floor_pct}% floor</div>
+        <div className="-translate-y-1/2 whitespace-nowrap text-[12px] font-[680] text-[#9b0016]">{plan.floor_pct}% floor</div>
       </Html>
     </group>
   );
@@ -94,9 +94,9 @@ export function ReservoirSection() {
                   <ScenarioTank x={9.5} plan={prop} hour={hour} reduced={reduced} />
                 </TwinCanvas>
               ) : webgl === false ? (
-                <p className="p-6 text-white">3D isn’t available here. The chart beside shows the same projection.</p>
+                <p className="p-6 text-black">3D isn’t available here. The chart beside shows the same projection.</p>
               ) : null}
-              <div className="pointer-events-none absolute inset-x-0 top-0 grid grid-cols-2 p-5 text-center text-white" aria-live="polite">
+              <div className="pointer-events-none absolute inset-x-0 top-0 grid grid-cols-2 p-5 text-center text-black" aria-live="polite">
                 {[["Baseline operation", base], ["Peak-tariff throttling", prop]].map(([label, plan]) => {
                   const pl = plan as PlanResult;
                   const below = pl.levels_pct[hour] < pl.floor_pct;
@@ -111,7 +111,7 @@ export function ReservoirSection() {
                   );
                 })}
               </div>
-              <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-[rgba(12,27,72,0.85)] px-4 py-3 text-white">
+              <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-[rgba(144,224,239,0.85)] px-4 py-3 text-black">
                 <button type="button" className="btn btn-primary btn-sm" onClick={() => { if (hour >= 10) setHour(0); setPlaying((p) => !p); }} disabled={reduced && false}>
                   {playing ? "Pause" : hour >= 10 ? "Replay" : "Play the evening"}
                 </button>
@@ -128,7 +128,7 @@ export function ReservoirSection() {
                   { name: "Baseline", values: base.levels_pct, color: SERIES.reference, dashed: true },
                   { name: "Peak throttling", values: prop.levels_pct, color: SERIES.s1 },
                 ]}
-                thresholds={[{ value: prop.floor_pct, label: `${prop.floor_pct}% floor`, color: "#d33a3f", dashed: false }]}
+                thresholds={[{ value: prop.floor_pct, label: `${prop.floor_pct}% floor`, color: "#b3001b", dashed: false }]}
                 marker={hour} band={[0, 6]} bandLabel="Peak tariff" format={(v) => v.toFixed(1)} height={230}
               />
               <div className="grid grid-cols-2 gap-5">
