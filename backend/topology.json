@@ -1,0 +1,172 @@
+{
+  "assets": [
+    {
+      "id": "INT-01",
+      "name": "Coastal intake",
+      "type": "intake",
+      "x": 110,
+      "y": 300
+    },
+    {
+      "id": "RO-01",
+      "name": "Desalination unit 1",
+      "type": "plant",
+      "x": 280,
+      "y": 220
+    },
+    {
+      "id": "RO-02",
+      "name": "Desalination unit 2",
+      "type": "plant",
+      "x": 280,
+      "y": 400
+    },
+    {
+      "id": "RES-01",
+      "name": "North reservoir",
+      "type": "reservoir",
+      "x": 450,
+      "y": 140
+    },
+    {
+      "id": "RES-02",
+      "name": "Central reservoir",
+      "type": "reservoir",
+      "x": 450,
+      "y": 310
+    },
+    {
+      "id": "RES-03",
+      "name": "South reservoir",
+      "type": "reservoir",
+      "x": 450,
+      "y": 480
+    },
+    {
+      "id": "PMP-01",
+      "name": "Transmission pump",
+      "type": "pump",
+      "x": 610,
+      "y": 310
+    },
+    {
+      "id": "V-04",
+      "name": "Sector 4 valve",
+      "type": "valve",
+      "x": 730,
+      "y": 430
+    },
+    {
+      "id": "SEC-01",
+      "name": "Sector 1 · North",
+      "type": "sector",
+      "x": 800,
+      "y": 100
+    },
+    {
+      "id": "SEC-02",
+      "name": "Sector 2 · East",
+      "type": "sector",
+      "x": 800,
+      "y": 210
+    },
+    {
+      "id": "SEC-03",
+      "name": "Sector 3 · Central",
+      "type": "sector",
+      "x": 800,
+      "y": 320
+    },
+    {
+      "id": "SEC-04",
+      "name": "Sector 4 · Harbour",
+      "type": "sector",
+      "x": 850,
+      "y": 475
+    },
+    {
+      "id": "SEC-05",
+      "name": "Sector 5 · South",
+      "type": "sector",
+      "x": 720,
+      "y": 570
+    }
+  ],
+  "edges": [
+    [
+      "INT-01",
+      "RO-01",
+      625
+    ],
+    [
+      "INT-01",
+      "RO-02",
+      625
+    ],
+    [
+      "RO-01",
+      "RES-01",
+      200
+    ],
+    [
+      "RO-01",
+      "RES-02",
+      100
+    ],
+    [
+      "RO-02",
+      "RES-02",
+      100
+    ],
+    [
+      "RO-02",
+      "RES-03",
+      200
+    ],
+    [
+      "RES-01",
+      "PMP-01",
+      180
+    ],
+    [
+      "RES-02",
+      "PMP-01",
+      190
+    ],
+    [
+      "RES-03",
+      "PMP-01",
+      180
+    ],
+    [
+      "PMP-01",
+      "SEC-01",
+      100
+    ],
+    [
+      "PMP-01",
+      "SEC-02",
+      120
+    ],
+    [
+      "PMP-01",
+      "SEC-03",
+      130
+    ],
+    [
+      "PMP-01",
+      "V-04",
+      110
+    ],
+    [
+      "V-04",
+      "SEC-04",
+      110
+    ],
+    [
+      "PMP-01",
+      "SEC-05",
+      90
+    ]
+  ]
+}

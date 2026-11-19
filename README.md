@@ -1,29 +1,54 @@
-# AquaGrid
+# AquaGrid functional local MVP
 
-Interactive infrastructure explorer and network-first command centre, built as a dependency-free browser simulation.
+A FastAPI + SQLite water-network simulation with an interactive infrastructure explorer and operator command centre. All assets, tariffs, sensor streams, and policies are synthetic. No hardware or PLC connections.
 
-## Run
+## Start
 
-Open `dist/index.html` directly, or serve `dist` with `python3 -m http.server 4173 --directory dist`.
+Requires Python 3.11+ and network access on first installation.
 
-## Included
+```sh
+./scripts/run.sh
+```
 
-- Original procedural SVG exploded model of five infrastructure layers, with expand/collapse, contextual information and a 2D alternative.
-- Interactive network with asset search, inspection, upstream tracing, pan, zoom, flow and label controls.
-- Reproducible 14:00 disruption, intake sensor quarantine, independent Sector 4 leak evidence.
-- Three production comparisons with calculated reserve projections and energy costs, demo constraint evaluation and session JSON export.
-- Responsive interface, keyboard asset controls, reduced-motion support.
+The script creates a local virtual environment, installs runtime dependencies if needed, asks you to choose an operator password, and serves **http://127.0.0.1:8000**. Enter the control centre and click **Operator sign in / out** to authenticate with that password. Read-only exploration does not need login.
 
-## Limits
+Alternatively:
 
-This implements the requested visual application experience. It is not the full engineering MVP described in the supplied reference briefs. There is no Python service, EPANET hydraulic solver, authenticated operator workflow, LLM integration or physical actuator. Data is synthetic; pressure/head values are illustrative. Session history is held in browser memory and resets on reload. All controls are simulation or inspection controls.
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-dev.txt
+export AQUAGRID_OPERATOR_PASSWORD='choose-your-own-local-password'
+.venv/bin/uvicorn backend.main:create_app --factory --host 127.0.0.1 --port 8000
+```
 
-Hourly reservoir balance: next volume = current volume + production − demand − injected loss. Capacity 10,000 m³, initial storage 6,200 m³, demand 550 m³/h, injected loss 65 m³/h, demo reserve floor 35%. Desalination production totals 600 m³/h from 1,250 m³/h feed; the remaining 650 m³/h reject stream is outside the distribution schematic. Cost sums production × 3.5 kWh/m³ × illustrative USD tariffs (0.32 peak, 0.12 off-peak). These assumptions are educational, not operating guidance.
+API schema: http://127.0.0.1:8000/docs. The default database is `data/aquagrid.sqlite`; override with `AQUAGRID_DB`. Database files and environments are excluded from Git. Stop with Ctrl-C. Restarting preserves simulation state and history; scenario reset preserves audit records and expires pending proposals.
 
-## Validation
+## Four-minute demonstration
 
-Run `node tests/model.cjs` for reserve-balance and cost assertions. Browser checks cover landing model controls, upstream tracing, disruption, reserve-floor rejection, quarantine, activity recording and responsive layouts.
+1. Sign in as demo operator. Reset to baseline if necessary.
+2. In Energy planning, compare **Optimize tariffs** with the baseline. Stage a schedule, review its constraints, and approve it to demonstrate a plant schedule change. Reset before the disruption demonstration.
+3. Run **14:00 disruption**. Python injects the leak, sensor flatline and bloom warning; it detects the faulty signal and automatically quarantines Q-01.
+4. Sensor diagnostics shows raw samples, computed variance and independent Sector 4 pressure/inflow evidence.
+5. Energy planning → Aggressive throttle → Stage selected plan. Observe `BLOCKED_BY_SAFETY`, a 30.8% minimum reserve, and the separate quality block. The tariff optimizer can calculate a feasible reserve schedule, but it cannot clear the quality gate.
+6. Incident centre → Test unauthorized valve command. The server returns HTTP 403 and writes the denial to the audit table.
+7. Sample telemetry if the demo has been open for over five minutes. Stage safe isolation, then Control approvals → Review approval → Approve and execute. This closes V-04 in the simulator and activates the separately modeled bypass. Loss falls to zero; Sector 4 demand is maintained. The bloom warning stays unresolved.
+8. Reload: state and history persist. Export report to download the complete latest snapshot, proposals, sensor evidence, projections and audit records.
 
-## Assets
+## Tests
 
-All infrastructure geometry and icons are original code-generated SVG; no stock photography or third-party models. Google Fonts: Manrope, DM Sans and IBM Plex Mono, with system fallbacks. Fonts require network access; all simulation logic works offline.
+```sh
+.venv/bin/pip install -r requirements-dev.txt
+.venv/bin/python -m pytest backend/tests -q
+```
+
+The suite verifies read/write separation, authentication, flatline/drift/implausible signal classification, leak evidence, reserve/quality precedence, schedule feasibility/costs, proposal expiry and versions, reset/persistence, audit immutability, concurrent duplicate approvals, and valid simulated execution. No external AI API or model weights required.
+
+## Engineering limits
+
+This is a functional supervised simulation MVP, not an operational water utility controller. The model uses aggregate hourly mass balance and synthetic pressure signatures; it does not solve EPANET/WNTR hydraulics, pressure transients, water chemistry, plant ramp limits or pump efficiency. See `docs/ARCHITECTURE.md` and `docs/SAFETY.md`.
+
+The existing public Vercel site still serves the earlier browser demonstration. This backend revision is intended for local use or a single persistent server with a durable volume. Do not put the SQLite file on an ephemeral Vercel filesystem. A cloud release requires durable database/storage provisioning and production authentication. The included Dockerfile supports a persistent-server deployment; it has not been deployed to a hosted backend in this session.
+
+## Visual assets
+
+Original procedural SVG infrastructure geometry and icons. Fonts: Manrope, DM Sans and IBM Plex Mono via Google Fonts, with system fallbacks. No stock photography or licensed 3D models required.
