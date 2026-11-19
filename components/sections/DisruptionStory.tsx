@@ -50,7 +50,7 @@ export function DisruptionStory() {
   useEffect(() => { if (live) setSnapshots((m) => (m[live.scene.id] === live ? m : { ...m, [live.scene.id]: live })); }, [live]);
 
   return (
-    <section id="incident" aria-labelledby="story-title" className="bg-white">
+    <section id="incident" aria-labelledby="story-title" className="bg-[var(--color-paper)]">
       <header className="mx-auto max-w-[1400px] px-5 pb-10 pt-24 sm:px-10">
         <h2 id="story-title" className="type-display max-w-[14ch]">One city. Four disruptions.</h2>
         <p className="measure mt-6 text-[1.125rem] leading-relaxed">

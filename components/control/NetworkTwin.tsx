@@ -184,7 +184,7 @@ export function NetworkTwin() {
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {topo?.edges.filter((e) => e.from === sel.id || e.to === sel.id).map((e) => {
                 const other = e.from === sel.id ? e.to : e.from;
-                return <button key={other} type="button" onClick={() => setSelected(other)} className="rounded-full border border-[var(--color-line)] px-2.5 py-1 text-[13px] hover:border-black">{other}</button>;
+                return <button key={other} type="button" onClick={() => setSelected(other)} className="rounded-full border border-[var(--color-line)] px-2.5 py-1 text-[13px] hover:border-[var(--color-blue)]">{other}</button>;
               })}
             </div>
             <button type="button" className="btn btn-ghost btn-sm mt-5" onClick={() => setTrace((t) => !t)}>{trace ? "Clear upstream trace" : "Trace where its water comes from"}</button>

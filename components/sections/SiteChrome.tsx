@@ -1,18 +1,28 @@
 "use client";
 
+import { useId } from "react";
 import { usePathname } from "next/navigation";
 import { useScenario } from "@/components/ScenarioController";
 
 export function Logo() {
+  const key = useId().replace(/:/g, "");
   return (
-    <span className="flex items-center gap-2.5">
-      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="7" fill="#0c1b48" />
-        <path d="M16 5c3.6 4.6 6 8 6 11a6 6 0 0 1-12 0c0-3 2.4-6.4 6-11Z" fill="#62a7ea" />
-        <path d="M7 24h18M9 27h14" stroke="#fff44f" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-      <span className="text-[1.15rem] font-[760] tracking-[-0.01em]" style={{ fontStretch: "118%" }}>AquaGrid</span>
-    </span>
+    <svg viewBox="180 120 1820 470" role="img" aria-label="AquaGrid" className="aquagrid-logo">
+      <defs>
+        {/* Render the supplied artwork on navy without changing the source PNG.
+            Knock out its white paper and display the original wordmark in white. */}
+        <filter id={`${key}-paper`} colorInterpolationFilters="sRGB">
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 0 3" />
+        </filter>
+        <filter id={`${key}-word`} colorInterpolationFilters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1 -1 -1 0 3" />
+        </filter>
+        <clipPath id={`${key}-symbol`}><rect width="660" height="724" /></clipPath>
+        <clipPath id={`${key}-letters`}><rect x="660" width="1512" height="724" /></clipPath>
+      </defs>
+      <image href="/brand/aquagrid-logo-original.png" width="2172" height="724" filter={`url(#${key}-paper)`} clipPath={`url(#${key}-symbol)`} />
+      <image href="/brand/aquagrid-logo-original.png" width="2172" height="724" filter={`url(#${key}-word)`} clipPath={`url(#${key}-letters)`} />
+    </svg>
   );
 }
 
@@ -27,7 +37,7 @@ export function SiteHeader() {
   const { state, offline } = useScenario();
   const path = usePathname();
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-black/10 bg-white/95 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/15 bg-[var(--color-navy)]/95 backdrop-blur">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:rounded focus:bg-[var(--color-yellow)] focus:px-3 focus:py-2">Skip to content</a>
       <div className="mx-auto flex h-full max-w-[1400px] items-center justify-between gap-4 px-5 sm:px-10">
         {/* Use document navigation between WebGL scenes and the control room.

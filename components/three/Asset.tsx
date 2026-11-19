@@ -46,7 +46,7 @@ export function Asset({ id, position = [0, 0, 0], ring = 1.6, labelY = 3, label 
       )}
       {label && (isSel || isHover) && (
         <Html position={[0, labelY, 0]} center zIndexRange={[30, 10]} style={{ pointerEvents: "none" }}>
-          <div className="whitespace-nowrap rounded-md bg-white px-2.5 py-1.5 text-[13px] leading-tight text-black shadow-[0_6px_24px_rgba(12,27,72,0.35)]">
+          <div className="whitespace-nowrap rounded-md bg-[var(--color-paper)] px-2.5 py-1.5 text-[13px] leading-tight text-white shadow-[0_6px_24px_rgba(12,27,72,0.35)]">
             <div className="font-[680]">{ASSET_NAMES[id] ?? id}</div>
             <div className="text-[12px] text-[var(--color-muted)]">{id}{status && status !== "normal" ? `, ${statusLabel(status)}` : ""}</div>
           </div>

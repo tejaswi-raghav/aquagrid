@@ -84,7 +84,7 @@ export function SceneLeak({ s }: { s: SimState }) {
         title="Sector 4 inflow against expected demand"
         x={fm.series.map((p) => p.t)} unit="m³/h"
         series={[{ name: "Inflow FM-S4", values: fm.series.map((p) => p.v), color: SERIES.s1 }]}
-        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#000" }] : []}
+        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#c1d2eb" }] : []}
         format={(v) => v.toFixed(0)} height={180}
       />
       <LineChart
@@ -381,10 +381,10 @@ export function SceneControl({ s, onLock }: { s: SimState; onLock: (valve: strin
               <p className="text-[14.5px] font-[680]">Operator sign-in</p>
               <div className="grid grid-cols-2 gap-3">
                 <label className="text-[13px]">Operator ID
-                  <input value={opId} onChange={(e) => setOpId(e.target.value)} autoComplete="username" className="mt-1 block w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-[15px]" />
+                  <input value={opId} onChange={(e) => setOpId(e.target.value)} autoComplete="username" className="mt-1 block w-full rounded-md border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-[15px]" />
                 </label>
                 <label className="text-[13px]">PIN
-                  <input value={pin} onChange={(e) => setPin(e.target.value)} type="password" inputMode="numeric" autoComplete="current-password" className="mt-1 block w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-[15px]" />
+                  <input value={pin} onChange={(e) => setPin(e.target.value)} type="password" inputMode="numeric" autoComplete="current-password" className="mt-1 block w-full rounded-md border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-[15px]" />
                 </label>
               </div>
               <button type="submit" className="btn btn-blue btn-sm" disabled={busy || !pin}>Sign in</button>

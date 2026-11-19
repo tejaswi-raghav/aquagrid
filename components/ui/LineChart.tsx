@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
-export const SERIES = { s1: "#2a78d6", s2: "#1baf7a", s3: "#6250d6", reference: "#7d8699" };
+export const SERIES = { s1: "#62a7ea", s2: "#5ad7ae", s3: "#c4b5fd", reference: "#7d8699" };
 
 export interface Series { name: string; values: number[]; color: string; dashed?: boolean }
 export interface Threshold { value: number; label: string; color: string; dashed?: boolean }
@@ -99,37 +99,37 @@ export function LineChart({
           {band && (
             <g>
               <rect x={sx(band[0])} y={PAD.t} width={sx(band[1]) - sx(band[0])} height={ih} fill="#fff44f" opacity="0.32" />
-              {bandLabel && <text x={sx(band[0]) + 6} y={PAD.t + 14} fontSize="12" fill="#000" fontWeight="600">{bandLabel}</text>}
+              {bandLabel && <text x={sx(band[0]) + 6} y={PAD.t + 14} fontSize="12" fill="#ffffff" fontWeight="600">{bandLabel}</text>}
             </g>
           )}
           {ticks.map((t) => (
             <g key={t}>
-              <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t)} y2={sy(t)} stroke="#e3e9f2" />
-              <text x={PAD.l - 8} y={sy(t) + 4} textAnchor="end" fontSize="11.5" fill="#3d4a63">{format(t)}</text>
+              <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t)} y2={sy(t)} stroke="#405583" />
+              <text x={PAD.l - 8} y={sy(t) + 4} textAnchor="end" fontSize="11.5" fill="#b7c8e3">{format(t)}</text>
             </g>
           ))}
-          {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#3d4a63">{unit}</text>}
+          {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#b7c8e3">{unit}</text>}
           {x.map((lbl, i) => (i % every === 0 || i === n - 1) && (
-            <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#3d4a63">{lbl}</text>
+            <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#b7c8e3">{lbl}</text>
           ))}
           {thresholds.map((t) => (
             <g key={t.label}>
               <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t.value)} y2={sy(t.value)} stroke={t.color} strokeWidth="1.5" strokeDasharray={t.dashed === false ? undefined : "6 4"} />
-              <text x={PAD.l + iw + 6} y={sy(t.value) + 4} fontSize="11.5" fill="#000" fontWeight="600">{t.label}</text>
+              <text x={PAD.l + iw + 6} y={sy(t.value) + 4} fontSize="11.5" fill="#ffffff" fontWeight="600">{t.label}</text>
             </g>
           ))}
-          {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#000" strokeWidth="1.5" />}
+          {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#ffffff" strokeWidth="1.5" />}
           {series.map((s) => (
             <path key={s.name} d={path(s.values)} fill="none" stroke={s.color} strokeWidth="2.25" strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? "6 4" : undefined} />
           ))}
           {series.length <= 4 && ends.map((e) => (
-            <text key={e.name} x={PAD.l + iw + 6} y={e.y + 4} fontSize="12" fill="#000">
+            <text key={e.name} x={PAD.l + iw + 6} y={e.y + 4} fontSize="12" fill="#ffffff">
               <tspan fill={e.color}>●</tspan> {e.name.length > 17 ? e.name.slice(0, 16) + "…" : e.name}
             </text>
           ))}
           {hover !== null && (
             <g pointerEvents="none">
-              <line x1={sx(hover)} x2={sx(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#0c1b48" strokeOpacity="0.35" />
+              <line x1={sx(hover)} x2={sx(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#ffffff" strokeOpacity="0.35" />
               {series.map((s) => (
                 <circle key={s.name} cx={sx(hover)} cy={sy(s.values[hover])} r="4.5" fill={s.color} stroke="#fff" strokeWidth="2" />
               ))}

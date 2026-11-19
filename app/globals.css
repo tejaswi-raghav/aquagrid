@@ -2,30 +2,30 @@
 
 /*
   AquaGrid palette
-  ink      #000000  all text on light surfaces
+  ink      #FFFFFF  primary text on navy surfaces
   navy     #0C1B48  3D viewports, structural blocks
   blue     #62A7EA  water, flow, interactive accent
   yellow   #FFF44F  survey marker: the one thing to look at (always behind black text)
-  paper    #FFFFFF / mist #EEF4FB surfaces
+  paper    #0C1B48 / mist #16285F surfaces
   status   amber #E8892B (warning), red #D33A3F (violated / critical) — status only
 */
 @theme {
-  --color-ink: #000000;
+  --color-ink: #ffffff;
   --color-navy: #0c1b48;
   --color-navy-2: #16285f;
   --color-navy-3: #24397a;
   --color-blue: #62a7ea;
-  --color-blue-deep: #2f7fd0;
-  --color-blue-pale: #dcebfa;
+  --color-blue-deep: #62a7ea;
+  --color-blue-pale: #24397a;
   --color-yellow: #fff44f;
-  --color-paper: #ffffff;
-  --color-mist: #eef4fb;
-  --color-line: #c9d6e6;
-  --color-muted: #3d4a63;
+  --color-paper: #0c1b48;
+  --color-mist: #16285f;
+  --color-line: #405583;
+  --color-muted: #b7c8e3;
   --color-amber: #e8892b;
-  --color-amber-pale: #fdebd6;
+  --color-amber-pale: #49331e;
   --color-red: #d33a3f;
-  --color-red-pale: #fbe1e1;
+  --color-red-pale: #48243d;
   --color-green: #2e8b57;
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
@@ -37,7 +37,7 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html {
@@ -142,4 +142,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}
+
+/* Supplied AquaGrid identity, rendered without a white image tile. */
+.aquagrid-logo { display: block; width: clamp(146px, 18vw, 214px); height: 55px; flex-shrink: 0; }
+footer .aquagrid-logo { width: 250px; height: 65px; }
+::selection { background: var(--color-yellow); color: #000; }
+:focus-visible { outline-color: var(--color-yellow); }
+input, select, textarea { color: var(--color-ink); }
+input::placeholder, textarea::placeholder { color: #9bb1d1; }
+@media (max-width: 390px) {
+  .aquagrid-logo { width: 140px; height: 46px; }
 }

@@ -78,14 +78,14 @@ export function statusLabel(s: Status | undefined): string {
 }
 
 export const STATUS_TONE: Record<string, { bg: string; fg: string; label: string }> = {
-  normal: { bg: "#dcebfa", fg: "#000", label: "Normal" },
-  watch: { bg: "#fdebd6", fg: "#000", label: "Under watch" },
-  warning: { bg: "#fdebd6", fg: "#000", label: "Warning" },
-  alarm: { bg: "#fbe1e1", fg: "#000", label: "Alarm" },
-  critical: { bg: "#fbe1e1", fg: "#000", label: "Incident" },
-  fault: { bg: "#fdebd6", fg: "#000", label: "Flatline" },
-  flatline: { bg: "#fdebd6", fg: "#000", label: "Flatline" },
-  quarantined: { bg: "#e3e7ee", fg: "#000", label: "Quarantined" },
+  normal: { bg: "#24397a", fg: "#fff", label: "Normal" },
+  watch: { bg: "#49331e", fg: "#fff", label: "Under watch" },
+  warning: { bg: "#49331e", fg: "#fff", label: "Warning" },
+  alarm: { bg: "#48243d", fg: "#fff", label: "Alarm" },
+  critical: { bg: "#48243d", fg: "#fff", label: "Incident" },
+  fault: { bg: "#49331e", fg: "#fff", label: "Flatline" },
+  flatline: { bg: "#49331e", fg: "#fff", label: "Flatline" },
+  quarantined: { bg: "#263750", fg: "#fff", label: "Quarantined" },
   closed: { bg: "#fff44f", fg: "#000", label: "Closed" },
-  isolated: { bg: "#e3e7ee", fg: "#000", label: "Isolated" },
+  isolated: { bg: "#263750", fg: "#fff", label: "Isolated" },
 };

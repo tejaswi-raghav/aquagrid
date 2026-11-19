@@ -36,7 +36,7 @@ function Plans() {
         <div role="radiogroup" aria-label="Plan" className="flex flex-wrap gap-1.5">
           {ev.results.map((r, i) => (
             <button key={r.plan_id} type="button" role="radio" aria-checked={pick === i} onClick={() => setPick(i)}
-              className={`rounded-full border px-3 py-1.5 text-[13.5px] font-[620] ${pick === i ? "border-black bg-[var(--color-yellow)]" : "border-[var(--color-line)]"}`}>
+              className={`rounded-full border px-3 py-1.5 text-[13.5px] font-[620] ${pick === i ? "border-[var(--color-yellow)] bg-[var(--color-yellow)] text-black" : "border-[var(--color-line)]"}`}>
               {r.plan_name}
             </button>
           ))}
@@ -81,7 +81,7 @@ export default function ControlRoom() {
             <div role="radiogroup" aria-label="Scenario time" className="flex flex-wrap gap-1 rounded-full bg-[var(--color-mist)] p-1">
               {(state?.scenes ?? []).map((s) => (
                 <button key={s.id} type="button" role="radio" aria-checked={scene === s.id} title={s.title} onClick={() => setScene(s.id)}
-                  className={`rounded-full px-3 py-1.5 text-[13px] font-[640] ${scene === s.id ? "bg-black text-[var(--color-yellow)]" : "hover:bg-white"}`}>
+                  className={`rounded-full px-3 py-1.5 text-[13px] font-[640] ${scene === s.id ? "bg-[var(--color-yellow)] text-black" : "hover:bg-[var(--color-paper)]"}`}>
                   {s.clock}
                 </button>
               ))}

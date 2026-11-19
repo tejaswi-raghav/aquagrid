@@ -32,8 +32,8 @@ export function Figure({ label, value, unit, note, emphasis }: { label: string; 
 export function Verdict({ kind, headline, children }: { kind: "rejected" | "hold" | "accepted" | "locked"; headline: string; children?: ReactNode }) {
   const styles = {
     rejected: "bg-[var(--color-red)] text-white",
-    hold: "bg-[var(--color-amber-pale)] text-black border border-[var(--color-amber)]",
-    accepted: "bg-[var(--color-blue-pale)] text-black",
+    hold: "bg-[var(--color-amber-pale)] text-white border border-[var(--color-amber)]",
+    accepted: "bg-[var(--color-blue-pale)] text-white",
     locked: "bg-[var(--color-yellow)] text-black border border-black",
   }[kind];
   const icon = {
@@ -63,7 +63,7 @@ export function CheckList({ checks }: { checks: Check[] }) {
           <li key={c.id} className="flex gap-3 py-2.5 text-[14px]">
             <span
               className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[12px] font-[800] ${
-                failed ? (advisory ? "bg-[var(--color-amber)] text-black" : "bg-[var(--color-red)] text-white") : "bg-[var(--color-blue-pale)] text-black"
+                failed ? (advisory ? "bg-[var(--color-amber)] text-black" : "bg-[var(--color-red)] text-white") : "bg-[var(--color-blue-pale)] text-white"
               }`}
               aria-label={failed ? (advisory ? "Needs review" : "Failed") : "Passed"}
             >
@@ -90,5 +90,5 @@ export function Authority({ text }: { text: string }) {
 }
 
 export function ErrorNote({ children }: { children: ReactNode }) {
-  return <p role="alert" className="rounded-md bg-[var(--color-red-pale)] px-3 py-2 text-[14px] text-black">{children}</p>;
+  return <p role="alert" className="rounded-md bg-[var(--color-red-pale)] px-3 py-2 text-[14px] text-white">{children}</p>;
 }

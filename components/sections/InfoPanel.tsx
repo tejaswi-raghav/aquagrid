@@ -61,7 +61,7 @@ export function InfoPanel({ selected, state, onSelect, onClose }: {
         <ul className="mt-1.5 flex flex-wrap gap-1.5">
           {l.assets.map((id) => (
             <li key={id}>
-              <button type="button" onClick={() => onSelect(id)} className="rounded-full border border-[var(--color-line)] px-2.5 py-1 text-[13px] hover:border-black">
+              <button type="button" onClick={() => onSelect(id)} className="rounded-full border border-[var(--color-line)] px-2.5 py-1 text-[13px] hover:border-[var(--color-blue)]">
                 {ASSET_NAMES[id]}
               </button>
             </li>
@@ -104,7 +104,7 @@ export function InfoPanel({ selected, state, onSelect, onClose }: {
   }
 
   return (
-    <aside aria-live="polite" className="w-full max-w-[380px] rounded-xl bg-white p-5 text-black shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
+    <aside aria-live="polite" className="w-full max-w-[380px] rounded-xl bg-[var(--color-paper)] p-5 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[13px] text-[var(--color-muted)]">{overline}</div>

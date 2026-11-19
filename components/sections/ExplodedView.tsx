@@ -188,7 +188,7 @@ export function ExplodedView() {
           </div>
         </div>
         {webgl === false && (
-          <p className="absolute left-4 top-20 rounded bg-white px-3 py-2 text-[14px] text-black">This browser can’t show 3D, so you’re seeing the 2D section view.</p>
+          <p className="absolute left-4 top-20 rounded bg-[var(--color-paper)] px-3 py-2 text-[14px] text-white">This browser can’t show 3D, so you’re seeing the 2D section view.</p>
         )}
       </div>
     </section>

@@ -76,7 +76,7 @@ export function ReservoirSection() {
 
   const base = ev?.results[0], prop = ev?.results[1];
   return (
-    <section id="storage" aria-labelledby="storage-title" className="bg-white py-24">
+    <section id="storage" aria-labelledby="storage-title" className="bg-[var(--color-paper)] py-24">
       <div className="mx-auto max-w-[1400px] px-5 sm:px-10">
         <h2 id="storage-title" className="type-h2 max-w-[20ch]">Storage is the margin for every decision.</h2>
         <p className="measure mt-5 text-[1.0625rem] leading-relaxed">

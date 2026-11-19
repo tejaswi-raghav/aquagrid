@@ -154,7 +154,7 @@ export function DesalModule() {
             </div>
           </div>
 
-          <div className="space-y-6 rounded-2xl bg-white p-6">
+          <div className="space-y-6 rounded-2xl bg-[var(--color-paper)] p-6">
             {error && <ErrorNote>{error}</ErrorNote>}
             {stage && (
               <div aria-live="polite">
@@ -190,7 +190,7 @@ export function DesalModule() {
 
         {model && (
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-            <div className="rounded-2xl bg-white p-6">
+            <div className="rounded-2xl bg-[var(--color-paper)] p-6">
               <LineChart
                 title="Plant load against production"
                 x={curve.map((c) => String(c.production_m3h))} unit="kW" yMin={0}
@@ -199,7 +199,7 @@ export function DesalModule() {
               />
               <p className="mt-2 text-[13px] text-[var(--color-muted)]">Production, m³/h. Fixed loads make low output less efficient per cubic metre; high flux raises membrane pressure.</p>
             </div>
-            <div className="rounded-2xl bg-white p-6">
+            <div className="rounded-2xl bg-[var(--color-paper)] p-6">
               <ProcessDiagram feed={op!.feed_m3h} product={op!.production_m3h} brine={op!.brine_m3h} selected={selected} onSelect={setSelected} />
             </div>
           </div>
@@ -215,15 +215,15 @@ function ProcessDiagram({ feed, product, brine, selected, onSelect }: { feed: nu
   const box = (id: string, x: number, y: number, w: number, label: string, sub?: string) => (
     <g role="button" tabIndex={0} aria-label={label} aria-pressed={selected === id} onClick={() => onSelect(id)}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(id); } }} className="cursor-pointer">
-      <rect x={x} y={y} width={w} height="46" rx="6" fill={selected === id ? "#fff44f" : "#fff"} stroke="#000" strokeWidth="1.4" />
-      <text x={x + w / 2} y={y + (sub ? 20 : 28)} textAnchor="middle" fontSize="13" fontWeight="650">{label}</text>
-      {sub && <text x={x + w / 2} y={y + 36} textAnchor="middle" fontSize="11" fill="#3d4a63">{sub}</text>}
+      <rect x={x} y={y} width={w} height="46" rx="6" fill={selected === id ? "#fff44f" : "#16285f"} stroke="#62a7ea" strokeWidth="1.4" />
+      <text x={x + w / 2} y={y + (sub ? 20 : 28)} textAnchor="middle" fontSize="13" fontWeight="650" fill={selected === id ? "#000" : "#fff"}>{label}</text>
+      {sub && <text x={x + w / 2} y={y + 36} textAnchor="middle" fontSize="11" fill={selected === id ? "#24304b" : "#b7c8e3"}>{sub}</text>}
     </g>
   );
   const arrow = (d: string, color = "#2f7fd0", label?: string, lx = 0, ly = 0) => (
     <g>
       <path d={d} fill="none" stroke={color} strokeWidth="2.2" markerEnd={`url(#ah-${color.slice(1)})`} />
-      {label && <text x={lx} y={ly} fontSize="11.5" fill="#000">{label}</text>}
+      {label && <text x={lx} y={ly} fontSize="11.5" fill="#fff">{label}</text>}
     </g>
   );
   return (
