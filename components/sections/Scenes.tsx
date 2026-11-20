@@ -85,7 +85,7 @@ export function SceneLeak({ s }: { s: SimState }) {
         title="Sector 4 inflow against expected demand"
         x={fm.series.map((p) => p.t)} unit="m³/h"
         series={[{ name: "Inflow FM-S4", values: fm.series.map((p) => p.v), color: SERIES.s1 }]}
-        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#000000" }] : []}
+        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#04204f" }] : []}
         format={(v) => v.toFixed(0)} height={180}
       />
       <LineChart

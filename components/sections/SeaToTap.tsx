@@ -38,7 +38,7 @@ const PATH = "M40 180 C 120 180, 140 120, 220 120 S 340 170, 420 150 S 540 90, 6
 const STOPS = [0.04, 0.24, 0.43, 0.66, 0.98];
 
 function Icon({ k, active }: { k: string; active: boolean }) {
-  const s = active ? "#000" : "#03045e";
+  const s = active ? "#04204f" : "#003483";
   const common = { fill: "none", stroke: s, strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   switch (k) {
     case "sea": return <g {...common}><path d="M-14 2q7-7 14 0t14 0" /><path d="M-14 9q7-7 14 0t14 0" /><path d="M0-14v10" /></g>;
@@ -108,25 +108,25 @@ export function SeaToTap() {
             <svg viewBox="0 0 1000 260" className="h-auto w-full overflow-visible">
               <defs>
                 <linearGradient id="seawater" x1="0" x2="1">
-                  <stop offset="0" stopColor="#03045e" />
-                  <stop offset="1" stopColor="#023e8a" />
+                  <stop offset="0" stopColor="#003483" />
+                  <stop offset="1" stopColor="#0058b8" />
                 </linearGradient>
                 <filter id="dropglow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" /></filter>
               </defs>
-              <rect x="0" y="150" width="150" height="110" fill="#0077b6" opacity="0.55" rx="6" />
-              <path d={PATH} fill="none" stroke="#90e0ef" strokeOpacity="0.8" strokeWidth="14" strokeLinecap="round" />
+              <rect x="0" y="150" width="150" height="110" fill="#0078c0" opacity="0.55" rx="6" />
+              <path d={PATH} fill="none" stroke="#c9e9e5" strokeOpacity="0.8" strokeWidth="14" strokeLinecap="round" />
               <motion.path ref={pathRef} d={PATH} fill="none" stroke="url(#seawater)" strokeWidth="14" strokeLinecap="round" style={{ pathLength: drawn }} />
               <circle cx={drop.x} cy={drop.y} r="14" fill="#ffffff" opacity="0.85" filter="url(#dropglow)" />
-              <circle cx={drop.x} cy={drop.y} r="6" fill="#ffffff" stroke="#03045e" strokeWidth="2" />
+              <circle cx={drop.x} cy={drop.y} r="6" fill="#ffffff" stroke="#003483" strokeWidth="2" />
               {STAGES.map((s, i) => {
                 const p = pathRef.current && len > 1 ? pathRef.current.getPointAtLength(STOPS[i] * len) : { x: 40 + i * 230, y: 150 };
                 const on = i <= active;
                 return (
                   <g key={s.key} transform={`translate(${p.x} ${p.y - 58})`}>
-                    <line x1="0" y1="26" x2="0" y2="50" stroke={on ? "#03045e" : "#0587a3"} strokeWidth="2" strokeDasharray="3 4" />
-                    <motion.circle r="26" initial={false} animate={{ scale: i === active ? 1.12 : 1 }} fill={i === active ? "#fff44f" : on ? "#caf0f8" : "#48cae4"} stroke={on ? "#03045e" : "#0587a3"} strokeWidth="2" />
+                    <line x1="0" y1="26" x2="0" y2="50" stroke={on ? "#003483" : "#b5d6d8"} strokeWidth="2" strokeDasharray="3 4" />
+                    <motion.circle r="26" initial={false} animate={{ scale: i === active ? 1.12 : 1 }} fill={i === active ? "#b2fc6f" : on ? "#ffffff" : "#dff2f0"} stroke={on ? "#003483" : "#b5d6d8"} strokeWidth="2" />
                     <Icon k={s.key} active={i === active} />
-                    <text y="-38" textAnchor="middle" fill={on ? "#000" : "#0b4a5a"} fontSize="15" fontWeight="650">{s.label}</text>
+                    <text y="-38" textAnchor="middle" fill={on ? "#04204f" : "#5b7791"} fontSize="15" fontWeight="650">{s.label}</text>
                   </g>
                 );
               })}

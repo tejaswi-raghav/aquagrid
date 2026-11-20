@@ -43,7 +43,7 @@ function Stage({ index, id, name, powerKw, children }: { index: number; id: stri
     <group ref={ref}>
       <Asset id={id} ring={3.4} label={false}>{children}</Asset>
       <Html position={[0, index % 2 === 0 ? 4.2 : 6.4, 0]} center zIndexRange={[15, 5]} style={{ pointerEvents: "none" }}>
-        <div className={`whitespace-nowrap rounded-md px-2 py-1 text-center text-[12.5px] leading-tight ${selected === id ? "bg-[var(--color-yellow)] text-black" : "bg-[rgba(144,224,239,0.85)] text-black"}`}>
+        <div className={`whitespace-nowrap rounded-md px-2 py-1 text-center text-[12.5px] leading-tight ${selected === id ? "bg-[var(--color-yellow)] text-black" : "bg-[rgba(255,255,255,0.85)] text-black"}`}>
           <div className="font-[660]">{index + 1}. {name}</div>
           {powerKw !== undefined && <div className="opacity-80">{powerKw > 0 ? `${powerKw.toLocaleString()} kW` : "no direct load"}</div>}
         </div>
@@ -141,7 +141,7 @@ export function DesalModule() {
             ) : webgl === false ? (
               <p className="p-6 text-black">3D isn’t available in this browser. The process diagram below shows the same stages.</p>
             ) : null}
-            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-2 bg-[rgba(144,224,239,0.82)] px-4 py-3">
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-2 bg-[rgba(255,255,255,0.82)] px-4 py-3">
               <button type="button" className="btn btn-primary btn-sm" onClick={() => setExploded((v) => !v)} disabled={!webgl}>{exploded ? "Assemble plant" : "Explode plant"}</button>
               <div role="group" aria-label="Plant stages" className="flex flex-wrap gap-1">
                 {(model?.stages ?? []).map((s, i) => (
@@ -174,7 +174,7 @@ export function DesalModule() {
                 Production setting <span className="type-figure text-[1.25rem]">{production} m³/h</span>
               </label>
               <input id="prod" type="range" min={model?.limits.min_m3h ?? 100} max={model?.limits.max_m3h ?? 800} step={25} value={production}
-                onChange={(e) => setProduction(Number(e.target.value))} className="mt-2 w-full accent-[#03045e]" />
+                onChange={(e) => setProduction(Number(e.target.value))} className="mt-2 w-full accent-[#003483]" />
               <div className="flex justify-between text-[12px] text-[var(--color-muted)]"><span>Minimum turndown</span><span>Nominal 600</span><span>Maximum</span></div>
             </div>
             {op && (
@@ -215,15 +215,15 @@ function ProcessDiagram({ feed, product, brine, selected, onSelect }: { feed: nu
   const box = (id: string, x: number, y: number, w: number, label: string, sub?: string) => (
     <g role="button" tabIndex={0} aria-label={label} aria-pressed={selected === id} onClick={() => onSelect(id)}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(id); } }} className="cursor-pointer">
-      <rect x={x} y={y} width={w} height="46" rx="6" fill={selected === id ? "#fff44f" : "#48cae4"} stroke="#03045e" strokeWidth="1.4" />
-      <text x={x + w / 2} y={y + (sub ? 20 : 28)} textAnchor="middle" fontSize="13" fontWeight="650" fill="#000">{label}</text>
-      {sub && <text x={x + w / 2} y={y + 36} textAnchor="middle" fontSize="11" fill={selected === id ? "#08323d" : "#08323d"}>{sub}</text>}
+      <rect x={x} y={y} width={w} height="46" rx="6" fill={selected === id ? "#b2fc6f" : "#dff2f0"} stroke="#003483" strokeWidth="1.4" />
+      <text x={x + w / 2} y={y + (sub ? 20 : 28)} textAnchor="middle" fontSize="13" fontWeight="650" fill="#04204f">{label}</text>
+      {sub && <text x={x + w / 2} y={y + 36} textAnchor="middle" fontSize="11" fill={selected === id ? "#3d5a78" : "#3d5a78"}>{sub}</text>}
     </g>
   );
-  const arrow = (d: string, color = "#03045e", label?: string, lx = 0, ly = 0) => (
+  const arrow = (d: string, color = "#003483", label?: string, lx = 0, ly = 0) => (
     <g>
       <path d={d} fill="none" stroke={color} strokeWidth="2.2" markerEnd={`url(#ah-${color.slice(1)})`} />
-      {label && <text x={lx} y={ly} fontSize="11.5" fill="#000">{label}</text>}
+      {label && <text x={lx} y={ly} fontSize="11.5" fill="#04204f">{label}</text>}
     </g>
   );
   return (
@@ -241,12 +241,12 @@ function ProcessDiagram({ feed, product, brine, selected, onSelect }: { feed: nu
         {box("erd", 340, 150, 120, "Energy recovery", "+ booster pump")}
         {box("membranes", 510, 80, 110, "Membranes", "RO vessels")}
         {box("output", 510, 230, 200, "Post-treatment", "remineralise, disinfect")}
-        {arrow("M120 63H158", "#03045e", `${feed.toLocaleString()} m³/h`, 116, 32)}
+        {arrow("M120 63H158", "#003483", `${feed.toLocaleString()} m³/h`, 116, 32)}
         {arrow("M290 55H315V33H338")}
-        {arrow("M290 71H315V173H338", "#03045e", "brine-side share", 222, 125)}
+        {arrow("M290 71H315V173H338", "#003483", "brine-side share", 222, 125)}
         {arrow("M460 33H485V95H508")}
         {arrow("M460 173H485V111H508")}
-        {arrow("M620 103H660V228", "#03045e", `${product.toLocaleString()} m³/h product`, 600, 70)}
+        {arrow("M620 103H660V228", "#003483", `${product.toLocaleString()} m³/h product`, 600, 70)}
         {arrow("M565 126V186H462", "#4b5563", "concentrate, high pressure", 474, 204)}
         {arrow("M380 196V270H30", "#4b5563", `${brine.toLocaleString()} m³/h brine to outfall`, 40, 290)}
       </svg>

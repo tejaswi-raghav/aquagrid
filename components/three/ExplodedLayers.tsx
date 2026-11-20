@@ -91,9 +91,9 @@ export function Risers() {
 
 export function Ground() {
   const mats = useMemo(() => ({
-    land: std("#0b8aa6", { opacity: 0.9, roughness: 1 }),
+    land: std("#8fd0c4", { opacity: 0.9, roughness: 1 }),
     beach: std("#c9b98f", { roughness: 1 }),
-    road: std("#05708a", { roughness: 1 }),
+    road: std("#6bb3b0", { roughness: 1 }),
   }), []);
   return (
     <group>
@@ -109,7 +109,7 @@ export function Ground() {
 export function Sea() {
   const mats = useMemo(() => ({
     sea: std(COLORS.sea, { opacity: 0.7, roughness: 0.85, metalness: 0 }),
-    bed: std("#03587a", { roughness: 1 }),
+    bed: std("#0058b8", { roughness: 1 }),
   }), []);
   return (
     <group>
