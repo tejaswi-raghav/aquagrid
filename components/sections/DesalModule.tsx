@@ -42,9 +42,9 @@ function Stage({ index, id, name, powerKw, children }: { index: number; id: stri
   return (
     <group ref={ref}>
       <Asset id={id} ring={3.4} label={false}>{children}</Asset>
-      <Html
+      {index !== 0 && <Html
         position={[0, index % 2 === 0 ? 4.2 : 6.4, 0]}
-        center={index !== 0}
+        center
         zIndexRange={[15, 5]}
         style={{ pointerEvents: "none" }}
       >
@@ -52,7 +52,7 @@ function Stage({ index, id, name, powerKw, children }: { index: number; id: stri
           <div className="font-[660]">{index + 1}. {name}</div>
           {powerKw !== undefined && <div className="opacity-80">{powerKw > 0 ? `${powerKw.toLocaleString()} kW` : "no direct load"}</div>}
         </div>
-      </Html>
+      </Html>}
     </group>
   );
 }
@@ -146,6 +146,17 @@ export function DesalModule() {
             ) : webgl === false ? (
               <p className="p-6 text-black">3D isn’t available in this browser. The process diagram below shows the same stages.</p>
             ) : null}
+            {webgl && (
+              <button
+                type="button"
+                aria-pressed={selected === "intake"}
+                onClick={() => setSelected("intake")}
+                className={`absolute left-4 top-[36%] z-20 rounded-md px-2 py-1 text-center text-[12.5px] leading-tight text-black ${selected === "intake" ? "bg-[var(--color-yellow)]" : "bg-[rgba(255,255,255,0.9)]"}`}
+              >
+                <span className="block font-[660]">1. {model?.stages[0]?.name ?? "Seawater intake"}</span>
+                <span className="block opacity-80">{op?.stage_power_kw.intake ? `${op.stage_power_kw.intake.toLocaleString()} kW` : "no direct load"}</span>
+              </button>
+            )}
             <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-2 bg-[rgba(255,255,255,0.82)] px-4 py-3">
               <button type="button" className="btn btn-primary btn-sm" onClick={() => setExploded((v) => !v)} disabled={!webgl}>{exploded ? "Assemble plant" : "Explode plant"}</button>
               <div role="group" aria-label="Plant stages" className="flex flex-wrap gap-1">
