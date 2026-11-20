@@ -7,6 +7,7 @@ import { LineChart } from "@/components/ui/LineChart";
 import { api } from "@/lib/api";
 import { ASSET_NAMES } from "@/lib/assets";
 import { request, type Comparison, type LabConfig, type OpsDoc, type Proposal } from "@/lib/operations";
+import { AnalystPanel, type AnalystTurn } from "./AnalystPanel";
 import { NetworkTwin } from "./NetworkTwin";
 import { SituationTwin } from "./SituationTwin";
 import { Checks, DrillStepper, Heartbeat, Kpi, LiveClock, Pair, Panel, ReserveGauge, Toasts, type DrillStep, type Toast } from "./opsui";
@@ -26,9 +27,9 @@ const MODES: [Mode, string, string][] = [
   ["decide", "Decide", "Check safety, then authorize"],
 ];
 const TOOLS: Record<Mode, [string, string][]> = {
-  monitor: [["evidence", "Operational brief"], ["replay", "Decision replay"]],
-  investigate: [["evidence", "Evidence inspector"], ["lab", "Scenario Lab"], ["impact", "Impact explorer"]],
-  decide: [["plans", "Production planning"], ["queue", "Approval queue"], ["replay", "Decision replay"]],
+  monitor: [["evidence", "Operational brief"], ["analyst", "AI analyst"], ["replay", "Decision replay"]],
+  investigate: [["evidence", "Evidence inspector"], ["analyst", "AI analyst"], ["lab", "Scenario Lab"], ["impact", "Impact explorer"]],
+  decide: [["plans", "Production planning"], ["analyst", "AI analyst"], ["queue", "Approval queue"], ["replay", "Decision replay"]],
 };
 
 export default function OperationsWorkspace() {
@@ -52,6 +53,7 @@ export default function OperationsWorkspace() {
   const [denial, setDenial] = useState("");
   const [visited, setVisited] = useState<Record<string, boolean>>({});
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [analystTurns, setAnalystTurns] = useState<AnalystTurn[]>([]);
   const toastId = useRef(0);
   const detailRef = useRef<HTMLElement>(null);
 
@@ -379,6 +381,13 @@ export default function OperationsWorkspace() {
             </nav>
 
             <Panel id={`${mode}-${tool}`}>
+              {tool === "analyst" && (
+                <AnalystPanel doc={doc} turns={analystTurns} setTurns={setAnalystTurns}
+                  onDoc={(d) => { accept(d); const p = d.proposals[d.proposals.length - 1]; if (p) toast(p.status === "BLOCKED_BY_SAFETY"
+                    ? { tone: "danger", title: "AI proposal blocked by safety", detail: "The server rejected it. It cannot be approved." }
+                    : { tone: "info", title: "AI proposal staged", detail: "Waiting for a signed-in operator." }); }}
+                  onOpenQueue={() => go("decide", "queue")} />
+              )}
               {tool === "evidence" && (
                 <div className="ops-detail-grid">
                   <article>

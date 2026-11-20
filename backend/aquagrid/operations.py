@@ -252,7 +252,7 @@ class Operations:
                 if p['status']=='PENDING_APPROVAL':p['status']='EXPIRED'
             event(d,'INGEST' if body.operation=='sample' else body.operation.upper(),{'operation':body.operation,'config':d['config']},op['sub'])
         doc,_=self.repo.mutate(body.scenario_id,body.version,apply);return self.enrich(doc)
-    def stage_gated_valve_or_setpoint_action(self,body):
+    def stage_gated_valve_or_setpoint_action(self,body,author='deterministic analyst'):
         def apply(d):
             if body.kind=='schedule':
                 options=plans(d)
@@ -273,7 +273,7 @@ class Operations:
             event(d,'ENFORCE_SAFETY',{'eligible':safety['eligible'],'checks':safety['checks']})
             p={'id':uuid.uuid4().hex,'status':'PENDING_APPROVAL' if safety['eligible'] else 'BLOCKED_BY_SAFETY',
                'action':action,'safety':safety,'input':copy.deepcopy({k:d[k] for k in ['config','production','storage_pct','quarantined','sampled_at','epoch']}),
-               'evidence':analysis(d),'created_at':time.time(),'expires_at':time.time()+600,'version':1,'state_version':d['version']+1,'epoch':d['epoch'],'author':'deterministic analyst'}
+               'evidence':analysis(d),'created_at':time.time(),'expires_at':time.time()+600,'version':1,'state_version':d['version']+1,'epoch':d['epoch'],'author':author}
             p['input_sha256']=hashlib.sha256(json.dumps(p['input'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
             # New staging invalidates old leases, but never executes physical state.
             for old in d['proposals']:
