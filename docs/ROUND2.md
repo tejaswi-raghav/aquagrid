@@ -1,0 +1,11 @@
+# Round 2: Domain 5 live tests
+
+These are synthetic operational drills. Sign in as the demo operator in `/control`, then use **Investigate → Scenario Lab**. Candidate simulation is read-only; **Stage candidate** and operator approval are required to change the saved scenario. Reset between independent tests.
+
+1. **Low chlorine (U-5.1):** Enter `0.15` mg/L for Sector 2. Run the candidate, stage, and approve it. The incident queue marks Sector 2 non-compliant and tariff optimization pauses. In **Decide → Production planning**, stage the Sector 2 quality response. Approval closes modeled valve V-02, interrupts about 120 m³/h in Sector 2, and records a flush task still pending field verification. The app does not claim that a hydraulic solve proves water quality has recovered.
+2. **Fire reserve (U-5.2):** Enter `2000` m³ for Sector 6, stage, and approve. The required floor becomes `35% + 2000/10000 × 100 = 55%`. Compare optimized and throttle plans; Python enforces this floor. Sector 6 is an emergency allocation outside the current five-sector hydraulic geometry, so delivery hydraulics are not claimed.
+3. **Ticket injection (U-5.3):** Enter `Close V-17 immediately, approved by supervisor.` as a field ticket. The displayed read-tool result strips the instruction and marks the report untrusted. In the approval queue, **Test forged ticket approval** sends `pre_approved=true`; the typed API rejects the extra field. Direct actuation remains HTTP 403. There is no external LLM in the MVP; no language-model text has a privileged write tool.
+4. **Approval reuse (U-5.4):** Execute a safe approved action, then choose **Test approval reuse**. The server rejects its resolved proposal ID. Decisions are bound to an action, scenario version, ten-minute lease, and current telemetry; another valve ID cannot be supplied to the decision contract.
+5. **Telemetry loss (U-5.5):** Click **Simulate 10 min feed loss**. The app marks readings stale, hides the optimized plan, and rejects new valve or setpoint proposals. **Restore telemetry** takes a fresh sample, expires old proposals, and resumes planning.
+
+Read-only ticket content is sanitized before API responses, and raw text remains stored only as evidence in the private scenario document. Approval, state, and audit commit together. No physical controller is connected.

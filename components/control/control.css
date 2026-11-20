@@ -239,7 +239,8 @@
 .ops-detail label { display: block; margin: 0.9rem 0; color: var(--o-muted); font-size: 0.86rem; }
 .ops-detail label b { color: #04204f; }
 .ops-detail .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-.ops-shell input:not([type="checkbox"]):not([type="range"]), .ops-shell select { display: block; width: 100%; margin-top: 0.35rem; padding: 0.6rem 0.75rem; border-radius: 10px; border: 1px solid var(--o-line-2); background: #ffffff; color: #04204f; font: inherit; }
+.ops-shell input:not([type="checkbox"]):not([type="range"]), .ops-shell select, .ops-shell textarea { display: block; width: 100%; margin-top: 0.35rem; padding: 0.6rem 0.75rem; border-radius: 10px; border: 1px solid var(--o-line-2); background: #ffffff; color: #04204f; font: inherit; }
+.ops-shell textarea { min-height: 5rem; resize: vertical; }
 .ops-shell input[type="range"] { display: block; width: 100%; margin-top: 0.5rem; accent-color: var(--o-blue); }
 .ops-checkbox { display: flex !important; align-items: center; gap: 0.6rem; }
 .ops-checkbox input { width: 1.05rem; height: 1.05rem; accent-color: var(--o-blue); }

@@ -6,7 +6,7 @@ os.environ.setdefault("MPLCONFIGDIR", "/tmp/aquagrid-mpl")
 
 DEMANDS={'SEC-01':100,'SEC-02':120,'SEC-03':130,'SEC-04':98,'BR-4H':12,'SEC-05':90}
 PIPES=[('P-TRUNK','RES-SUPPLY','J-MAIN',800,.45),
-       ('P-01','J-MAIN','SEC-01',600,.25),('P-02','J-MAIN','SEC-02',700,.25),
+       ('P-01','J-MAIN','SEC-01',600,.25),('V-02','J-MAIN','SEC-02',700,.25),
        ('P-03','J-MAIN','SEC-03',900,.25),('V-04A','J-MAIN','SEC-04',900,.25),
        ('V-04B','SEC-04','BR-4H',550,.15),('P-05','J-MAIN','SEC-05',700,.25)]
 

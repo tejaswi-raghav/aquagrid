@@ -20,6 +20,8 @@ export const ASSET_NAMES: Record<string, string> = {
   "FM-PS": "Pumping station flow meter",
   "V-04A": "Sector 4 inlet valve",
   "V-04B": "Harbour branch isolation valve",
+  "V-02": "Sector 2 quality isolation valve",
+  "CL-S2": "Sector 2 chlorine residual",
   "FM-S4": "Sector 4 inflow meter",
   "P-S3": "Sector 3 pressure sensor",
   "P-S4A": "Sector 4 pressure sensor A",

@@ -30,6 +30,8 @@ ASSETS = [
     ("FM-PS", "Pumping station flow meter", "sensor", 2, {"measures": "flow", "unit": "m³/h"}),
     ("V-04A", "Sector 4 inlet valve", "valve", 2, {"diameter_mm": 400}),
     ("V-04B", "Harbour branch isolation valve", "valve", 2, {"diameter_mm": 250}),
+    ("V-02", "Sector 2 quality isolation valve", "valve", 2, {"diameter_mm": 250}),
+    ("CL-S2", "Sector 2 chlorine residual", "sensor", 2, {"measures": "free chlorine", "unit": "mg/L"}),
     ("FM-S4", "Sector 4 inlet flow meter", "sensor", 2, {"measures": "flow", "unit": "m³/h"}),
     ("P-S3", "Sector 3 pressure", "sensor", 2, {"measures": "pressure", "unit": "bar"}),
     ("P-S4A", "Sector 4 pressure A (junction)", "sensor", 2, {"measures": "pressure", "unit": "bar"}),
@@ -50,17 +52,17 @@ EDGES = [
     ("HPP-01", "RO-01", 625), ("HPP-01", "RO-02", 625),
     ("RO-01", "RES-01", 200), ("RO-01", "RES-02", 100), ("RO-02", "RES-02", 100), ("RO-02", "RES-03", 200),
     ("RES-01", "PS-01", 180), ("RES-02", "PS-01", 190), ("RES-03", "PS-01", 180),
-    ("PS-01", "SEC-01", 100), ("PS-01", "SEC-02", 120), ("PS-01", "SEC-03", 130),
+    ("PS-01", "SEC-01", 100), ("PS-01", "V-02", 120), ("V-02", "SEC-02", 120), ("PS-01", "SEC-03", 130),
     ("PS-01", "V-04A", 110), ("V-04A", "SEC-04", 110), ("SEC-04", "V-04B", 12), ("V-04B", "BR-4H", 12),
     ("PS-01", "SEC-05", 90),
 ]
 
 SENSOR_ATTACHMENT = {
     "CHL-01": "INT-01", "TURB-01": "INT-01", "SDI-01": "HPP-01", "COND-01": "RO-01",
-    "FM-PS": "PS-01", "FM-S4": "V-04A", "P-S3": "SEC-03", "P-S4A": "SEC-04", "P-S4B": "BR-4H",
+    "FM-PS": "PS-01", "FM-S4": "V-04A", "P-S3": "SEC-03", "P-S4A": "SEC-04", "P-S4B": "BR-4H", "CL-S2": "SEC-02",
 }
 
-CONTROLLABLE_VALVES = {"V-04A", "V-04B"}
+CONTROLLABLE_VALVES = {"V-02", "V-04A", "V-04B"}
 SUPPLY_SOURCES = ("RES-01", "RES-02", "RES-03")
 
 
