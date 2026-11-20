@@ -17,6 +17,9 @@ def dispatch(method,path,raw):
         if path=='/api/ops/stage' and method=='POST':return 200,ops.stage_gated_valve_or_setpoint_action(ProposalRequest.model_validate(body))
         if path=='/api/ops/decision' and method=='POST':return 200,ops.decide(Decision.model_validate(body))
         if path=='/api/ops/event' and method=='POST':return 200,ops.event(Event.model_validate(body))
+        if path=='/api/ops/ask' and method=='POST':
+            from .analyst import Analyst,AskRequest
+            return 200,Analyst(ops).ask(AskRequest.model_validate(body))
         if path=='/api/ops/actuate':return 403,{'error':'AI and direct actuator access denied. Use the staged human-approval gateway.'}
         return 404,{'error':'Unknown operational route'}
     except ValidationError as e:return 422,{'error':'Invalid typed request','details':e.errors(include_url=False,include_context=False)}
