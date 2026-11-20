@@ -30,13 +30,13 @@ export function useTwin() {
 }
 
 export const COLORS = {
-  navy: "#00b4d8",
-  navy2: "#48cae4",
-  navy3: "#90e0ef",
-  deep: "#03045e",
-  blue: "#0466c8", // deeper than #62a7ea so flowing water reads against the cyan field
-  blueDeep: "#023e8a",
-  yellow: "#fff44f",
+  navy: "#f2fafa",
+  navy2: "#dff2f0",
+  navy3: "#c9e9e5",
+  deep: "#003483",
+  blue: "#0078c0", // logo blue: flowing water reads clearly on the pale ground
+  blueDeep: "#0058b8",
+  yellow: "#b2fc6f",
   white: "#f4f7fb",
   concrete: "#c9d3e1",
   steel: "#9fb0c8",
@@ -44,7 +44,7 @@ export const COLORS = {
   amber: "#e8892b",
   red: "#d33a3f",
   grey: "#7f8aa3",
-  sea: "#0077b6",
+  sea: "#0078c0",
 };
 
 export function statusColor(status: Status | undefined): string {

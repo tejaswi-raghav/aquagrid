@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 // Tuned for the cyan surface: dark navy and white are far apart in lightness, violet is the third.
-export const SERIES = { s1: "#03045e", s2: "#ffffff", s3: "#6a00f4", reference: "#ffffff" };
+export const SERIES = { s1: "#0058b8", s2: "#079a4a", s3: "#7a2ee0", reference: "#04204f" };
 
 export interface Series { name: string; values: number[]; color: string; dashed?: boolean }
 export interface Threshold { value: number; label: string; color: string; dashed?: boolean }
@@ -96,19 +96,19 @@ export function LineChart({
           <title id={`${id}-t`}>{title ?? series.map((s) => s.name).join(", ")}</title>
           {band && (
             <g>
-              <rect x={sx(band[0])} y={PAD.t} width={sx(band[1]) - sx(band[0])} height={ih} fill="#fff44f" opacity="0.5" />
-              {bandLabel && <text x={sx(band[0]) + 6} y={PAD.t + 14} fontSize="12" fill="#000000" fontWeight="600">{bandLabel}</text>}
+              <rect x={sx(band[0])} y={PAD.t} width={sx(band[1]) - sx(band[0])} height={ih} fill="#b2fc6f" opacity="0.5" />
+              {bandLabel && <text x={sx(band[0]) + 6} y={PAD.t + 14} fontSize="12" fill="#04204f" fontWeight="600">{bandLabel}</text>}
             </g>
           )}
           {ticks.map((t) => (
             <g key={t}>
-              <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t)} y2={sy(t)} stroke="#000000" strokeOpacity="0.14" />
-              <text x={PAD.l - 8} y={sy(t) + 4} textAnchor="end" fontSize="11.5" fill="#08323d">{format(t)}</text>
+              <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t)} y2={sy(t)} stroke="#04204f" strokeOpacity="0.14" />
+              <text x={PAD.l - 8} y={sy(t) + 4} textAnchor="end" fontSize="11.5" fill="#3d5a78">{format(t)}</text>
             </g>
           ))}
-          {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#08323d">{unit}</text>}
+          {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#3d5a78">{unit}</text>}
           {x.map((lbl, i) => ((i % every === 0 && (n-1-i>=every*.7)) || i === n - 1) && (
-            <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#08323d">{lbl}</text>
+            <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#3d5a78">{lbl}</text>
           ))}
           {thresholds.map((t) => (
             <g key={t.label}>
@@ -116,15 +116,15 @@ export function LineChart({
 
             </g>
           ))}
-          {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#000000" strokeWidth="1.5" />}
+          {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#04204f" strokeWidth="1.5" />}
           {series.map((s) => (
             <path key={s.name} d={path(s.values)} fill="none" stroke={s.color} strokeWidth="2.25" strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? "6 4" : undefined} />
           ))}
           {hover !== null && (
             <g pointerEvents="none">
-              <line x1={sx(hover)} x2={sx(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#000000" strokeOpacity="0.35" />
+              <line x1={sx(hover)} x2={sx(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#04204f" strokeOpacity="0.35" />
               {series.map((s) => (
-                <circle key={s.name} cx={sx(hover)} cy={sy(s.values[hover])} r="4.5" fill={s.color} stroke="#000" strokeWidth="1.5" />
+                <circle key={s.name} cx={sx(hover)} cy={sy(s.values[hover])} r="4.5" fill={s.color} stroke="#04204f" strokeWidth="1.5" />
               ))}
             </g>
           )}

@@ -17,7 +17,7 @@ const clock = (t: number) => new Date(t * 1000).toLocaleString();
 const num = (n: number) => n.toFixed(1);
 const HOURS = ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "00"];
 // Chart marks on cyan: deep navy and white contrast with the surface and with each other.
-const C = { blue: "#03045e", yellow: "#ffffff", ref: "#08323d", red: "#b3001b", amber: "#7c2d12" };
+const C = { blue: "#0058b8", yellow: "#079a4a", ref: "#3d5a78", red: "#b3001b", amber: "#7c2d12" };
 
 type Mode = "monitor" | "investigate" | "decide";
 const MODES: [Mode, string, string][] = [

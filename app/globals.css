@@ -1,34 +1,37 @@
 @import "tailwindcss";
 
 /*
-  AquaGrid palette (cyan)
-  ink      #000000  text on cyan surfaces
-  cyan     #00B4D8  primary surface, 3D viewports (token name "navy" kept for compatibility)
-  cyan-2   #48CAE4  raised panels      cyan-3 #90E0EF  chips, hover, plates
-  deep     #023E8A / #03045E  accents, links, lines (readable on cyan)
-  water    #62A7EA  water fills in 3D and charts
-  yellow   #FFF44F  survey marker: the one thing to look at (always behind black text)
+  AquaGrid palette, taken from the logo's blue → cyan → green glass.
+  ink      #04204F  text (the logo's deepest blue, darkened for body-text contrast)
+  paper    #F7FCFC  page ground, the white the logo was drawn on
+  surface  #F2FAFA  3D stages and panels (token name "navy" kept for compatibility)
+  deep     #003483  primary buttons, links    blue #0058B8    cyan #03C5D5
+  teal     #029D8C  secondary data             green #0AB541   lime #B2FC6F (the "act here" marker)
   status   amber #9A3412 (warning), red #B3001B (violated / critical) — status only
 */
 @theme {
-  --color-ink: #000000;
-  --color-navy: #00b4d8;
-  --color-navy-2: #48cae4;
-  --color-navy-3: #90e0ef;
-  --color-blue: #023e8a;
-  --color-blue-deep: #03045e;
-  --color-blue-pale: #90e0ef;
-  --color-water: #62a7ea;
-  --color-yellow: #fff44f;
-  --color-paper: #00b4d8;
-  --color-mist: #48cae4;
-  --color-line: #0587a3;
-  --color-muted: #08323d;
+  --color-black: #04204f;
+  --color-ink: #04204f;
+  --color-navy: #f2fafa;
+  --color-navy-2: #dff2f0;
+  --color-navy-3: #c9e9e5;
+  --color-blue: #0058b8;
+  --color-blue-deep: #003483;
+  --color-blue-pale: #d6ebf7;
+  --color-water: #03b5d0;
+  --color-cyan: #03c5d5;
+  --color-teal: #029d8c;
+  --color-leaf: #0ab541;
+  --color-yellow: #b2fc6f;
+  --color-paper: #f7fcfc;
+  --color-mist: #e8f5f4;
+  --color-line: #c4e0e1;
+  --color-muted: #3d5a78;
   --color-amber: #9a3412;
   --color-amber-pale: #ffe1b3;
   --color-red: #b3001b;
   --color-red-pale: #ffd0d5;
-  --color-green: #05603a;
+  --color-green: #05703a;
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 
@@ -40,6 +43,7 @@
 
 :root {
   color-scheme: light;
+  --brand-gradient: linear-gradient(100deg, #003483 0%, #0078c0 30%, #03c5d5 55%, #0ab541 82%, #b2fc6f 100%);
 }
 
 html {
@@ -56,6 +60,9 @@ body {
 }
 
 @layer components {
+/* The logo's blue → cyan → green glass as a 3px rule under the site header. */
+.brand-rule::after { content: ""; position: absolute; inset: auto 0 0 0; height: 3px; background: var(--brand-gradient); }
+
 /* Wide, engineered headlines: Archivo's width axis does the work. */
 .type-display {
   font-size: var(--text-display);
@@ -98,7 +105,7 @@ body {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   padding: 0 0.18em;
-  color: #000;
+  color: #04204f;
 }
 
 }
@@ -120,22 +127,22 @@ body {
   cursor: pointer; white-space: nowrap;
 }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primary { background: var(--color-yellow); color: #000; border-color: #000; }
-.btn-primary:not(:disabled):hover { background: #000; color: var(--color-yellow); }
+.btn-primary { background: var(--color-yellow); color: #04204f; border-color: #04204f; }
+.btn-primary:not(:disabled):hover { background: #04204f; color: var(--color-yellow); }
 .btn-blue { background: var(--color-blue-deep); color: #fff; border-color: var(--color-blue-deep); }
-.btn-blue:not(:disabled):hover { background: #000; color: #fff; border-color: #000; }
+.btn-blue:not(:disabled):hover { background: #04204f; color: #fff; border-color: #04204f; }
 .btn-ghost { background: transparent; }
-.btn-ghost:not(:disabled):hover { background: rgba(3, 4, 94, 0.1); }
+.btn-ghost:not(:disabled):hover { background: rgba(0,52,131, 0.1); }
 .btn-sm { min-height: 2.25rem; padding: 0 0.85rem; font-size: 0.8125rem; }
 
 .tool {
   display: inline-grid; place-items: center;
   width: 2.5rem; height: 2.5rem; border-radius: 999px;
-  background: rgba(144, 224, 239, 0.85); color: #000; border: 1px solid rgba(3, 4, 94, 0.3);
+  background: rgba(255,255,255, 0.85); color: #04204f; border: 1px solid rgba(0,52,131, 0.3);
   backdrop-filter: blur(8px); cursor: pointer; transition: background-color 160ms ease;
 }
 .tool:hover { background: var(--color-navy-3); }
-.tool[aria-pressed="true"] { background: var(--color-yellow); color: #000; border-color: #000; }
+.tool[aria-pressed="true"] { background: var(--color-yellow); color: #04204f; border-color: #04204f; }
 
 .scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-line) transparent; }
 
@@ -149,7 +156,7 @@ body {
 /* Supplied AquaGrid identity, rendered without a white image tile. */
 .aquagrid-logo { display: block; width: clamp(146px, 18vw, 214px); height: auto; flex-shrink: 0; }
 footer .aquagrid-logo { width: 250px; height: auto; }
-::selection { background: var(--color-yellow); color: #000; }
+::selection { background: var(--color-yellow); color: #04204f; }
 :focus-visible { outline-color: var(--color-blue-deep); }
 input, select, textarea { color: var(--color-ink); }
 input::placeholder, textarea::placeholder { color: #2c5f6b; }
@@ -160,21 +167,21 @@ input::placeholder, textarea::placeholder { color: #2c5f6b; }
 html { overflow-x: clip; }
 
 /* Screen-space editorial composition: text and geometry never share a region. */
-.system-stage{position:sticky;top:0;height:100svh;min-height:540px;display:flex;flex-direction:column;padding-top:64px;overflow:hidden;background:#00b4d8;color:#000}
+.system-stage{position:sticky;top:0;height:100svh;min-height:540px;display:flex;flex-direction:column;padding-top:64px;overflow:hidden;background:#f2fafa;color:#04204f}
 .system-composition{display:grid;grid-template-columns:minmax(230px,29%) minmax(0,1fr);flex:1;min-height:0}
 .system-caption{padding:30px 20px 24px 32px;min-width:0;display:flex;flex-direction:column;justify-content:center;overflow-y:auto;overscroll-behavior:contain}
-.system-eyebrow{font-size:10px;line-height:1.6;letter-spacing:.14em;color:#03045e;margin-bottom:18px}
+.system-eyebrow{font-size:10px;line-height:1.6;letter-spacing:.14em;color:#003483;margin-bottom:18px}
 .system-introduction h2{font-size:clamp(30px,3.6vw,54px);line-height:1.04;font-weight:740;letter-spacing:-.04em;max-width:11ch}
-.system-introduction>p:not(.system-eyebrow){font-size:15px;line-height:1.75;color:#08323d;margin-top:20px;max-width:32ch}
-.system-introduction>span{display:block;font-size:12px;line-height:1.5;color:#03045e;margin-top:22px}
+.system-introduction>p:not(.system-eyebrow){font-size:15px;line-height:1.75;color:#3d5a78;margin-top:20px;max-width:32ch}
+.system-introduction>span{display:block;font-size:12px;line-height:1.5;color:#003483;margin-top:22px}
 .system-model{min-width:0;min-height:0;position:relative}
 .system-layer-key{display:flex;flex-direction:column;gap:5px}
-.system-layer-key button{display:flex;align-items:flex-start;gap:12px;padding:12px 10px;text-align:left;border-left:2px solid #0587a3;background:transparent;cursor:pointer;min-width:0}
-.system-layer-key button:hover,.system-layer-key button[aria-pressed=true]{border-color:#03045e;background:#48cae4}
-.system-layer-number{font-size:12px;line-height:1.6;color:#03045e;font-weight:700;flex-shrink:0}
+.system-layer-key button{display:flex;align-items:flex-start;gap:12px;padding:12px 10px;text-align:left;border-left:2px solid #b5d6d8;background:transparent;cursor:pointer;min-width:0}
+.system-layer-key button:hover,.system-layer-key button[aria-pressed=true]{border-color:#003483;background:#dff2f0}
+.system-layer-number{font-size:12px;line-height:1.6;color:#003483;font-weight:700;flex-shrink:0}
 .system-layer-key strong{display:block;font-size:14px;font-weight:640;line-height:1.4}
-.system-layer-key small{display:block;font-size:12px;line-height:1.55;color:#08323d;margin-top:4px}
-.system-toolbar{flex-shrink:0;background:#00b4d8;z-index:10}
+.system-layer-key small{display:block;font-size:12px;line-height:1.55;color:#3d5a78;margin-top:4px}
+.system-toolbar{flex-shrink:0;background:#f2fafa;z-index:10}
 .system-asset-details{min-height:0;overflow:auto}
 @media(max-width:699px){
  .system-stage{min-height:570px}
@@ -182,7 +189,7 @@ html { overflow-x: clip; }
  .system-composition.is-intro{grid-template-rows:auto minmax(0,1fr)}
  .system-composition.is-exploded{grid-template-rows:minmax(0,1fr) auto}
  .system-caption{padding:14px 20px;overflow:auto;justify-content:flex-start}
- .is-exploded .system-caption{order:2;padding:8px 18px 12px;border-top:1px solid #00000020}
+ .is-exploded .system-caption{order:2;padding:8px 18px 12px;border-top:1px solid #04204f20}
  .system-introduction h2{font-size:clamp(26px,5.8vw,36px);max-width:none}
  .system-introduction .system-eyebrow{margin-bottom:6px;font-size:9px}
  .system-introduction>p:not(.system-eyebrow){font-size:13px;line-height:1.5;margin-top:8px;max-width:65ch}

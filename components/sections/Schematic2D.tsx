@@ -26,16 +26,16 @@ function colour(status?: string) {
   if (status === "critical" || status === "alarm") return "#b3001b";
   if (status === "warning" || status === "watch" || status === "fault" || status === "flatline") return "#c2410c";
   if (status === "quarantined" || status === "isolated") return "#4b5563";
-  if (status === "closed") return "#000000";
-  return "#03045e";
+  if (status === "closed") return "#04204f";
+  return "#003483";
 }
 
 /** Accessible 2D section of the five layers. Every asset is a keyboard-focusable button. */
 export function Schematic2D({ state, selected, onSelect, focusLayer, dark = true }: {
   state: SimState | null; selected: string | null; onSelect: (id: string) => void; focusLayer?: number | null; dark?: boolean;
 }) {
-  const ink = "#000000";
-  const sub = "#08323d";
+  const ink = "#04204f";
+  const sub = "#3d5a78";
   const edges = Object.keys(PIPES).map((k) => k.split(">") as [string, string]);
   const centre = (id: string) => {
     const a = ASSET_POS[id];
@@ -49,7 +49,7 @@ export function Schematic2D({ state, selected, onSelect, focusLayer, dark = true
         const dim = focusLayer != null && focusLayer !== l.id;
         return (
           <g key={l.id} opacity={dim ? 0.35 : 1}>
-            <rect x="8" y={y + 4} width={W - 16} height={BAND - 8} rx="6" fill={dark ? "rgba(255,255,255,0.18)" : "#eef4fb"} stroke={dark ? "rgba(3,4,94,0.3)" : "#c9d6e6"} />
+            <rect x="8" y={y + 4} width={W - 16} height={BAND - 8} rx="6" fill={dark ? "rgba(255,255,255,0.18)" : "#eef4fb"} stroke={dark ? "rgba(0,52,131,0.3)" : "#c9d6e6"} />
             <text x="22" y={y + 34} fill={ink} fontSize="15" fontWeight="680">{l.id}. {l.short}</text>
             <text x="22" y={y + 54} fill={sub} fontSize="12">{l.name}</text>
           </g>
@@ -58,7 +58,7 @@ export function Schematic2D({ state, selected, onSelect, focusLayer, dark = true
       {edges.map(([a, b]) => {
         const p = centre(a), q = centre(b);
         const bad = state?.leak.active && b === "BR-4H";
-        return <path key={`${a}${b}`} d={`M${p.x} ${p.y}V${(p.y + q.y) / 2}H${q.x}V${q.y}`} fill="none" stroke={bad ? "#b3001b" : dark ? "#03045e" : "#62a7ea"} strokeWidth="2" />;
+        return <path key={`${a}${b}`} d={`M${p.x} ${p.y}V${(p.y + q.y) / 2}H${q.x}V${q.y}`} fill="none" stroke={bad ? "#b3001b" : dark ? "#003483" : "#03b5d0"} strokeWidth="2" />;
       })}
       {Object.keys(ASSET_POS).map((id) => {
         const { x, y } = centre(id);
@@ -78,8 +78,8 @@ export function Schematic2D({ state, selected, onSelect, focusLayer, dark = true
             onClick={() => onSelect(id)}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(id); } }}
           >
-            {isSel && <circle r="15" fill="#fff44f" />}
-            <circle r="8" fill={colour(st)} stroke={dark ? "#caf0f8" : "#fff"} strokeWidth="2" />
+            {isSel && <circle r="15" fill="#b2fc6f" />}
+            <circle r="8" fill={colour(st)} stroke={dark ? "#ffffff" : "#fff"} strokeWidth="2" />
             <text y="-14" textAnchor="middle" fill={ink} fontSize="11" fontWeight="600">{id}</text>
           </g>
         );

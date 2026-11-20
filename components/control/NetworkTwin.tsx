@@ -35,8 +35,8 @@ function colour(status?: string) {
   if (status === "critical" || status === "alarm") return "#b3001b";
   if (status === "warning" || status === "watch" || status === "fault" || status === "flatline") return "#c2410c";
   if (status === "quarantined" || status === "isolated") return "#4b5563";
-  if (status === "closed") return "#000000";
-  return "#03045e";
+  if (status === "closed") return "#04204f";
+  return "#003483";
 }
 
 export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideInspector=false}: {
@@ -122,12 +122,12 @@ export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideIn
           onPointerUp={() => { drag.current = null; }}
         >
           <defs>
-            <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#90e0ef" /></pattern>
+            <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#c9e9e5" /></pattern>
             <style>{`@keyframes dash{to{stroke-dashoffset:-40}} .flow{stroke-dasharray:6 14;animation:dash linear infinite} @keyframes nodepulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}} .node-pulse{transform-box:fill-box;transform-origin:center;animation:nodepulse 1.6s ease-out infinite} @media (prefers-reduced-motion: reduce){.flow,.node-pulse{animation:none}}`}</style>
           </defs>
           <rect width="980" height="680" fill="url(#dots)" />
           <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}>
-            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#0077b6" opacity="0.6" />
+            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#0078c0" opacity="0.6" />
             {topo?.edges.map((e) => {
               const a = POS[e.from], b = POS[e.to];
               if (!a || !b) return null;
@@ -137,13 +137,13 @@ export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideIn
               const d = `M${a[0]} ${a[1]}H${(a[0] + b[0]) / 2}V${b[1]}H${b[0]}`;
               return (
                 <g key={`${e.from}${e.to}`} opacity={dim ? 0.12 : 1}>
-                  <path d={d} fill="none" stroke={bad ? "#b3001b" : "#0a6e85"} strokeWidth="3" />
+                  <path d={d} fill="none" stroke={bad ? "#b3001b" : "#8ab4c4"} strokeWidth="3" />
                   {flow && m3h > 0 && <path className="flow" d={d} fill="none" stroke={bad ? "#ffd0d5" : "#ffffff"} strokeWidth="3" style={{ animationDuration: `${Math.max(0.6, 900 / m3h).toFixed(2)}s` }} />}
                 </g>
               );
             })}
             {topo && Object.entries(topo.sensor_attachment).map(([s, host]) => POS[s] && POS[host] && (
-              <line key={s} x1={POS[s][0]} y1={POS[s][1]} x2={POS[host][0]} y2={POS[host][1]} stroke="#0a6e85" strokeDasharray="2 4" />
+              <line key={s} x1={POS[s][0]} y1={POS[s][1]} x2={POS[host][0]} y2={POS[host][1]} stroke="#8ab4c4" strokeDasharray="2 4" />
             ))}
             {assets.map((a) => {
               const p = POS[a.id];
@@ -160,16 +160,16 @@ export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideIn
                   {(st === "critical" || st === "alarm" || st === "warning" || st === "fault" || st === "flatline") && (
                     <circle className="node-pulse" r={isSensor ? 9 : 24} fill="none" stroke={colour(st)} strokeWidth="2" />
                   )}
-                  {selected === a.id && <circle r={isSensor ? 13 : 30} fill="#fff44f" stroke="#000" strokeWidth="2" />}
+                  {selected === a.id && <circle r={isSensor ? 13 : 30} fill="#b2fc6f" stroke="#04204f" strokeWidth="2" />}
                   {isSensor ? (
-                    <circle r="7" fill={colour(st)} stroke="#caf0f8" strokeWidth="2" />
+                    <circle r="7" fill={colour(st)} stroke="#ffffff" strokeWidth="2" />
                   ) : (
                     <>
-                      <circle r="23" fill="#caf0f8" stroke={colour(st)} strokeWidth="2" />
+                      <circle r="23" fill="#ffffff" stroke={colour(st)} strokeWidth="2" />
                       <path d={glyph(a.type)} fill="none" stroke={colour(st)} strokeWidth="1.6" strokeLinejoin="round" />
                     </>
                   )}
-                  {((labels && !isSensor) || selected === a.id) && <text y={isSensor ? -12 : 40} textAnchor="middle" fill="#000" fontSize="11.5" fontWeight="600">{a.id}</text>}
+                  {((labels && !isSensor) || selected === a.id) && <text y={isSensor ? -12 : 40} textAnchor="middle" fill="#04204f" fontSize="11.5" fontWeight="600">{a.id}</text>}
                 </g>
               );
             })}

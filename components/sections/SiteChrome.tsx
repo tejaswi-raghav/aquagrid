@@ -5,7 +5,7 @@ import { useScenario } from "@/components/ScenarioController";
 
 export function Logo() {
   // Transparent cut of the supplied artwork (public/brand/aquagrid-logo-original.png):
-  // white paper removed, symbol colours kept, wordmark black for the cyan theme.
+  // white paper removed, symbol colours kept, wordmark in the logo ink (#04204F).
   // eslint-disable-next-line @next/next/no-img-element
   return <img src="/brand/aquagrid-logo-transparent.png" alt="AquaGrid" width={910} height={235} className="aquagrid-logo" />;
 }
@@ -21,7 +21,7 @@ export function SiteHeader() {
   const { state, offline } = useScenario();
   const path = usePathname();
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-black/15 bg-[var(--color-navy)]/95 backdrop-blur">
+    <header className="brand-rule fixed inset-x-0 top-0 z-50 h-16 bg-white/90 backdrop-blur">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:rounded focus:bg-[var(--color-yellow)] focus:px-3 focus:py-2">Skip to content</a>
       <div className="mx-auto flex h-full max-w-[1400px] items-center justify-between gap-4 px-5 sm:px-10">
         {/* Use document navigation between WebGL scenes and the control room.
