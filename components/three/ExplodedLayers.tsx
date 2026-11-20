@@ -1,8 +1,7 @@
 "use client";
 
-import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 import { ASSET_POS, EXPLODE_OFFSET, LAYERS, RISERS } from "@/lib/world";
 import { applyFade, COLORS, std, useTwin } from "./twin";
@@ -36,44 +35,26 @@ export function LayerGroup({ layer, children }: { layer: number; children: React
 
 /** Translucent slab under each lifted layer, with its outline and a selectable label. */
 export function LayerPlate({ layer }: { layer: number }) {
-  const { explode, selectLayer, selected, focusLayer } = useTwin();
-  const [visible, setVisible] = useState(false);
+  const { explode } = useTwin();
   const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.navy3, transparent: true, opacity: 0, depthWrite: false }), []);
-  const edge = useMemo(() => new THREE.LineBasicMaterial({ color: COLORS.blue, transparent: true, opacity: 0 }), []);
+  const edge = useMemo(() => new THREE.LineBasicMaterial({ color: COLORS.deep, transparent: true, opacity: 0 }), []);
   const edges = useMemo(() => new THREE.EdgesGeometry(new THREE.BoxGeometry(SITE.x1 - SITE.x0, 0.1, SITE.z1 - SITE.z0)), []);
   const ref = useRef<THREE.Group>(null);
-  const active = selected === `layer:${layer}` || focusLayer === layer;
 
   useFrame(() => {
     const e = explode.current;
     if (ref.current) ref.current.position.y = EXPLODE_OFFSET[layer] * e - (layer === 2 ? 2.2 : 0.35);
     mat.opacity = (layer === 1 ? 0 : 0.42) * e;
     edge.opacity = 0.55 * e;
-    const v = e > 0.45;
-    if (v !== visible) setVisible(v);
   });
-  const meta = LAYERS[layer - 1];
   return (
     <group ref={ref}>
       <mesh material={mat} position={[(SITE.x0 + SITE.x1) / 2, 0, (SITE.z0 + SITE.z1) / 2]} raycast={() => null}>
         <boxGeometry args={[SITE.x1 - SITE.x0, 0.1, SITE.z1 - SITE.z0]} />
       </mesh>
       <lineSegments geometry={edges} material={edge} position={[(SITE.x0 + SITE.x1) / 2, 0, (SITE.z0 + SITE.z1) / 2]} raycast={() => null} />
-      {(
-        <Html position={[SITE.x0, 0.2, SITE.z1]} zIndexRange={[25, 10]} style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none", transition: "opacity 300ms" }}>
-          <button
-            type="button"
-            tabIndex={visible ? 0 : -1}
-            aria-hidden={!visible}
-            onClick={() => selectLayer(layer)}
-            className={`-translate-x-full -translate-y-1/2 whitespace-nowrap rounded-full border px-3 py-1.5 text-left text-[13px] font-[640] transition-colors ${
-              active ? "border-black bg-[var(--color-yellow)] text-black" : "border-white/30 bg-[rgba(12,27,72,0.82)] text-white hover:bg-[var(--color-navy-3)]"
-            }`}
-          >
-            <span className="mr-2 opacity-70">{layer}</span>{meta.name}
-          </button>
-        </Html>
-      )}
+      {/* Layer controls live in the fixed screen-space toolbar. Projected HTML
+          pills collide with the narrative and with each other during camera moves. */}
     </group>
   );
 }
@@ -81,7 +62,7 @@ export function LayerPlate({ layer }: { layer: number }) {
 /** Vertical links that keep the exploded layers visibly connected. */
 export function Risers() {
   const { explode, focusLayer } = useTwin();
-  const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.blue, transparent: true, opacity: 0, depthWrite: false }), []);
+  const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.deep, transparent: true, opacity: 0, depthWrite: false }), []);
   const refs = useRef<(THREE.Mesh | null)[]>([]);
   useFrame(() => {
     const e = explode.current;
@@ -110,9 +91,9 @@ export function Risers() {
 
 export function Ground() {
   const mats = useMemo(() => ({
-    land: std("#1b2f6b", { opacity: 0.86, roughness: 1 }),
+    land: std("#8fd0c4", { opacity: 0.9, roughness: 1 }),
     beach: std("#c9b98f", { roughness: 1 }),
-    road: std("#2a3f80", { roughness: 1 }),
+    road: std("#6bb3b0", { roughness: 1 }),
   }), []);
   return (
     <group>
@@ -128,7 +109,7 @@ export function Ground() {
 export function Sea() {
   const mats = useMemo(() => ({
     sea: std(COLORS.sea, { opacity: 0.7, roughness: 0.85, metalness: 0 }),
-    bed: std("#0f2559", { roughness: 1 }),
+    bed: std("#0058b8", { roughness: 1 }),
   }), []);
   return (
     <group>

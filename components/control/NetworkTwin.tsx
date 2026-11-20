@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api, type Topology } from "@/lib/api";
+import { api, type SimState, type Topology } from "@/lib/api";
 import { ASSET_NAMES, ASSET_ROLE, statusLabel } from "@/lib/assets";
 import { useScenario } from "@/components/ScenarioController";
 import { Figure, StatusChip } from "@/components/ui/bits";
@@ -32,23 +32,30 @@ function glyph(type: string) {
 }
 
 function colour(status?: string) {
-  if (status === "critical" || status === "alarm") return "#d33a3f";
-  if (status === "warning" || status === "watch" || status === "fault" || status === "flatline") return "#e8892b";
-  if (status === "quarantined" || status === "isolated") return "#7d8699";
-  if (status === "closed") return "#fff44f";
-  return "#62a7ea";
+  if (status === "critical" || status === "alarm") return "#b3001b";
+  if (status === "warning" || status === "watch" || status === "fault" || status === "flatline") return "#c2410c";
+  if (status === "quarantined" || status === "isolated") return "#4b5563";
+  if (status === "closed") return "#04204f";
+  return "#003483";
 }
 
-export function NetworkTwin() {
-  const { state } = useScenario();
+export function NetworkTwin({operationalState,selectedAsset,onAssetSelect,hideInspector=false}: {
+  operationalState?:SimState; selectedAsset?:string; onAssetSelect?:(id:string)=>void;hideInspector?:boolean;
+}={}) {
+  const { state:storyState } = useScenario();
+  const state=operationalState ?? storyState;
   const [topo, setTopo] = useState<Topology | null>(null);
-  const [selected, setSelected] = useState("RES-02");
+  const [selected, setSelectedRaw] = useState("RES-02");
+  const setSelected=(id:string)=>{setSelectedRaw(id);onAssetSelect?.(id)};
+  useEffect(()=>{if(selectedAsset)setSelectedRaw(selectedAsset)},[selectedAsset]);
   const [query, setQuery] = useState("");
   const [trace, setTrace] = useState(false);
   const [flow, setFlow] = useState(true);
-  const [labels, setLabels] = useState(true);
+  const [labels, setLabels] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const lastFocus = useRef(selectedAsset);
+  useEffect(()=>{if(selectedAsset && lastFocus.current!==selectedAsset){const p=POS[selectedAsset];if(p){setZoom(1.2);setPan({x:490-p[0]*1.2,y:340-p[1]*1.2})}lastFocus.current=selectedAsset}},[selectedAsset]);
   const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   const svg = useRef<SVGSVGElement>(null);
 
@@ -80,24 +87,24 @@ export function NetworkTwin() {
   const flowFor = (from: string, to: string) => state?.flows.find((f) => f.from === from && f.to === to)?.m3h ?? 0;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="on-navy overflow-hidden rounded-2xl bg-[var(--color-navy)] text-white">
-        <div className="flex flex-wrap items-center gap-3 border-b border-white/10 p-3">
+    <div className={hideInspector ? "min-w-0" : "grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]"}>
+      <div className="on-navy overflow-hidden rounded-2xl bg-[var(--color-navy)] text-black">
+        <div className="flex flex-wrap items-center gap-3 border-b border-black/10 p-3">
           <label className="relative min-w-[220px] flex-1">
             <span className="sr-only">Search assets</span>
             <input value={query} onChange={(e) => onSearch(e.target.value)} placeholder="Search assets, e.g. V-04B or reservoir"
-              className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-2 text-[14px] text-white placeholder:text-white/50" />
+              className="w-full rounded-full border border-black/20 bg-black/5 px-4 py-2 text-[14px] text-black placeholder:text-black/50" />
           </label>
           {[["Flow", flow, setFlow], ["Labels", labels, setLabels], ["Trace upstream", trace, setTrace]].map(([l, v, set]) => (
             <button key={l as string} type="button" aria-pressed={v as boolean} onClick={() => (set as (f: (x: boolean) => boolean) => void)((x) => !x)}
-              className={`rounded-full px-3 py-1.5 text-[13px] font-[620] ${v ? "bg-[var(--color-yellow)] text-black" : "bg-white/10 text-white"}`}>
+              className={`rounded-full px-3 py-1.5 text-[13px] font-[620] ${v ? "bg-[var(--color-yellow)] text-black" : "bg-black/10 text-black"}`}>
               {l as string}
             </button>
           ))}
           <div className="ml-auto flex gap-1.5">
             <button type="button" className="tool" aria-label="Zoom in" onClick={() => setZoom((z) => Math.min(z * 1.2, 2.6))}>+</button>
             <button type="button" className="tool" aria-label="Zoom out" onClick={() => setZoom((z) => Math.max(z / 1.2, 0.6))}>−</button>
-            <button type="button" className="btn btn-ghost btn-sm text-white" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>Fit</button>
+            <button type="button" className="btn btn-ghost btn-sm text-black" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>Fit</button>
           </div>
         </div>
         <svg
@@ -115,12 +122,12 @@ export function NetworkTwin() {
           onPointerUp={() => { drag.current = null; }}
         >
           <defs>
-            <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#24397a" /></pattern>
-            <style>{`@keyframes dash{to{stroke-dashoffset:-40}} .flow{stroke-dasharray:6 14;animation:dash linear infinite} @media (prefers-reduced-motion: reduce){.flow{animation:none}}`}</style>
+            <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#c9e9e5" /></pattern>
+            <style>{`@keyframes dash{to{stroke-dashoffset:-40}} .flow{stroke-dasharray:6 14;animation:dash linear infinite} @keyframes nodepulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}} .node-pulse{transform-box:fill-box;transform-origin:center;animation:nodepulse 1.6s ease-out infinite} @media (prefers-reduced-motion: reduce){.flow,.node-pulse{animation:none}}`}</style>
           </defs>
           <rect width="980" height="680" fill="url(#dots)" />
           <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}>
-            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#123b80" opacity="0.55" />
+            <path d="M0 0h120q-30 120-8 220t-12 220 10 240H0Z" fill="#0078c0" opacity="0.6" />
             {topo?.edges.map((e) => {
               const a = POS[e.from], b = POS[e.to];
               if (!a || !b) return null;
@@ -130,13 +137,13 @@ export function NetworkTwin() {
               const d = `M${a[0]} ${a[1]}H${(a[0] + b[0]) / 2}V${b[1]}H${b[0]}`;
               return (
                 <g key={`${e.from}${e.to}`} opacity={dim ? 0.12 : 1}>
-                  <path d={d} fill="none" stroke={bad ? "#d33a3f" : "#3c5aa8"} strokeWidth="3" />
-                  {flow && m3h > 0 && <path className="flow" d={d} fill="none" stroke={bad ? "#ff9b9b" : "#62a7ea"} strokeWidth="3" style={{ animationDuration: `${Math.max(0.6, 900 / m3h).toFixed(2)}s` }} />}
+                  <path d={d} fill="none" stroke={bad ? "#b3001b" : "#8ab4c4"} strokeWidth="3" />
+                  {flow && m3h > 0 && <path className="flow" d={d} fill="none" stroke={bad ? "#ffd0d5" : "#ffffff"} strokeWidth="3" style={{ animationDuration: `${Math.max(0.6, 900 / m3h).toFixed(2)}s` }} />}
                 </g>
               );
             })}
             {topo && Object.entries(topo.sensor_attachment).map(([s, host]) => POS[s] && POS[host] && (
-              <line key={s} x1={POS[s][0]} y1={POS[s][1]} x2={POS[host][0]} y2={POS[host][1]} stroke="#3c5aa8" strokeDasharray="2 4" />
+              <line key={s} x1={POS[s][0]} y1={POS[s][1]} x2={POS[host][0]} y2={POS[host][1]} stroke="#8ab4c4" strokeDasharray="2 4" />
             ))}
             {assets.map((a) => {
               const p = POS[a.id];
@@ -150,16 +157,19 @@ export function NetworkTwin() {
                   transform={`translate(${p[0]} ${p[1]})`} opacity={dim ? 0.18 : 1} className="cursor-pointer"
                   onClick={() => setSelected(a.id)}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(a.id); } }}>
-                  {selected === a.id && <circle r={isSensor ? 13 : 30} fill="none" stroke="#fff44f" strokeWidth="3" />}
+                  {(st === "critical" || st === "alarm" || st === "warning" || st === "fault" || st === "flatline") && (
+                    <circle className="node-pulse" r={isSensor ? 9 : 24} fill="none" stroke={colour(st)} strokeWidth="2" />
+                  )}
+                  {selected === a.id && <circle r={isSensor ? 13 : 30} fill="#b2fc6f" stroke="#04204f" strokeWidth="2" />}
                   {isSensor ? (
-                    <circle r="7" fill={colour(st)} stroke="#0c1b48" strokeWidth="2" />
+                    <circle r="7" fill={colour(st)} stroke="#ffffff" strokeWidth="2" />
                   ) : (
                     <>
-                      <circle r="23" fill="#0c1b48" stroke={colour(st)} strokeWidth="2" />
+                      <circle r="23" fill="#ffffff" stroke={colour(st)} strokeWidth="2" />
                       <path d={glyph(a.type)} fill="none" stroke={colour(st)} strokeWidth="1.6" strokeLinejoin="round" />
                     </>
                   )}
-                  {labels && <text y={isSensor ? -12 : 40} textAnchor="middle" fill="#fff" fontSize="11.5" fontWeight="600">{a.id}</text>}
+                  {((labels && !isSensor) || selected === a.id) && <text y={isSensor ? -12 : 40} textAnchor="middle" fill="#04204f" fontSize="11.5" fontWeight="600">{a.id}</text>}
                 </g>
               );
             })}
@@ -167,7 +177,7 @@ export function NetworkTwin() {
         </svg>
       </div>
 
-      <aside className="rounded-2xl border border-[var(--color-line)] p-5" aria-live="polite">
+      {!hideInspector && <aside className="rounded-2xl border border-[var(--color-line)] p-5" aria-live="polite">
         {sel ? (
           <>
             <p className="text-[13px] text-[var(--color-muted)]">{sel.id}, {sel.type}</p>
@@ -184,13 +194,13 @@ export function NetworkTwin() {
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {topo?.edges.filter((e) => e.from === sel.id || e.to === sel.id).map((e) => {
                 const other = e.from === sel.id ? e.to : e.from;
-                return <button key={other} type="button" onClick={() => setSelected(other)} className="rounded-full border border-[var(--color-line)] px-2.5 py-1 text-[13px] hover:border-black">{other}</button>;
+                return <button key={other} type="button" onClick={() => setSelected(other)} className="rounded-full border border-[var(--color-line)] px-2.5 py-1 text-[13px] hover:border-[var(--color-blue)]">{other}</button>;
               })}
             </div>
             <button type="button" className="btn btn-ghost btn-sm mt-5" onClick={() => setTrace((t) => !t)}>{trace ? "Clear upstream trace" : "Trace where its water comes from"}</button>
           </>
         ) : <p>Select an asset on the map.</p>}
-      </aside>
+      </aside>}
     </div>
   );
 }

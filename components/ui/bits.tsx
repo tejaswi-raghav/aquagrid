@@ -4,10 +4,10 @@ import { STATUS_TONE } from "@/lib/assets";
 
 export function StatusChip({ status }: { status: Status | string | undefined }) {
   const tone = STATUS_TONE[status ?? "normal"] ?? STATUS_TONE.normal;
-  const dot = status === "critical" || status === "alarm" ? "#d33a3f"
-    : status === "warning" || status === "watch" || status === "fault" || status === "flatline" ? "#e8892b"
-    : status === "quarantined" || status === "isolated" ? "#7d8699"
-    : status === "closed" ? "#000" : "#2f7fd0";
+  const dot = status === "critical" || status === "alarm" ? "#b3001b"
+    : status === "warning" || status === "watch" || status === "fault" || status === "flatline" ? "#c2410c"
+    : status === "quarantined" || status === "isolated" ? "#4b5563"
+    : status === "closed" ? "#04204f" : "#003483";
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12.5px] font-[620]" style={{ background: tone.bg, color: tone.fg }}>
       <span className="h-2 w-2 rounded-full" style={{ background: dot }} aria-hidden="true" />
@@ -63,7 +63,7 @@ export function CheckList({ checks }: { checks: Check[] }) {
           <li key={c.id} className="flex gap-3 py-2.5 text-[14px]">
             <span
               className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[12px] font-[800] ${
-                failed ? (advisory ? "bg-[var(--color-amber)] text-black" : "bg-[var(--color-red)] text-white") : "bg-[var(--color-blue-pale)] text-black"
+                failed ? (advisory ? "bg-[var(--color-amber)] text-black" : "bg-[var(--color-red)] text-white") : "bg-[var(--color-blue-deep)] text-white"
               }`}
               aria-label={failed ? (advisory ? "Needs review" : "Failed") : "Passed"}
             >
@@ -83,7 +83,7 @@ export function CheckList({ checks }: { checks: Check[] }) {
 export function Authority({ text }: { text: string }) {
   return (
     <p className="flex items-center gap-2 text-[12.5px] text-[var(--color-muted)]">
-      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v4H4V4Zm0 6h16v4H4v-4Zm0 6h16v4H4v-4Z" fill="#2f7fd0" /></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v4H4V4Zm0 6h16v4H4v-4Zm0 6h16v4H4v-4Z" fill="#003483" /></svg>
       {text}
     </p>
   );

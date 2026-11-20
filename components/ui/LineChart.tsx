@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
-export const SERIES = { s1: "#2a78d6", s2: "#1baf7a", s3: "#6250d6", reference: "#7d8699" };
+// Tuned for the cyan surface: dark navy and white are far apart in lightness, violet is the third.
+export const SERIES = { s1: "#0058b8", s2: "#079a4a", s3: "#7a2ee0", reference: "#04204f" };
 
 export interface Series { name: string; values: number[]; color: string; dashed?: boolean }
 export interface Threshold { value: number; label: string; color: string; dashed?: boolean }
@@ -24,7 +25,7 @@ interface Props {
   xTickEvery?: number;
 }
 
-const PAD = { l: 44, r: 118, t: 14, b: 28 };
+const PAD = { l: 44, r: 18, t: 14, b: 28 };
 
 export function LineChart({
   title, x, series, unit = "", yMin, yMax, thresholds = [], marker, band, bandLabel, step, height = 220,
@@ -75,15 +76,11 @@ export function LineChart({
     setHover(Math.round(Math.min(1, Math.max(0, px / r.width)) * (n - 1)));
   };
 
-  // Direct end labels, nudged apart so they never collide.
-  const ends = series.map((s) => ({ name: s.name, color: s.color, y: sy(s.values[s.values.length - 1]) }))
-    .sort((a, b) => a.y - b.y);
-  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
 
   return (
     <figure className="w-full min-w-0">
       {title && <figcaption className="mb-2 text-[14px] font-[640]">{title}</figcaption>}
-      {series.length > 1 && (
+      {(series.length > 0 || thresholds.length > 0) && (
         <ul className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-[var(--color-muted)]" aria-hidden="true">
           {series.map((s) => (
             <li key={s.name} className="flex items-center gap-1.5">
@@ -91,6 +88,7 @@ export function LineChart({
               {s.name}
             </li>
           ))}
+          {thresholds.map(t=><li key={t.label} className="flex items-center gap-1.5"><svg width="18" height="6"><line x1="0" x2="18" y1="3" y2="3" stroke={t.color} strokeWidth="2.5" strokeDasharray={t.dashed === false ? undefined : "4 3"} /></svg>{t.label}</li>)}
         </ul>
       )}
       <div ref={wrap} className="relative w-full min-w-0 overflow-hidden">
@@ -98,40 +96,35 @@ export function LineChart({
           <title id={`${id}-t`}>{title ?? series.map((s) => s.name).join(", ")}</title>
           {band && (
             <g>
-              <rect x={sx(band[0])} y={PAD.t} width={sx(band[1]) - sx(band[0])} height={ih} fill="#fff44f" opacity="0.32" />
-              {bandLabel && <text x={sx(band[0]) + 6} y={PAD.t + 14} fontSize="12" fill="#000" fontWeight="600">{bandLabel}</text>}
+              <rect x={sx(band[0])} y={PAD.t} width={sx(band[1]) - sx(band[0])} height={ih} fill="#b2fc6f" opacity="0.5" />
+              {bandLabel && <text x={sx(band[0]) + 6} y={PAD.t + 14} fontSize="12" fill="#04204f" fontWeight="600">{bandLabel}</text>}
             </g>
           )}
           {ticks.map((t) => (
             <g key={t}>
-              <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t)} y2={sy(t)} stroke="#e3e9f2" />
-              <text x={PAD.l - 8} y={sy(t) + 4} textAnchor="end" fontSize="11.5" fill="#3d4a63">{format(t)}</text>
+              <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t)} y2={sy(t)} stroke="#04204f" strokeOpacity="0.14" />
+              <text x={PAD.l - 8} y={sy(t) + 4} textAnchor="end" fontSize="11.5" fill="#3d5a78">{format(t)}</text>
             </g>
           ))}
-          {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#3d4a63">{unit}</text>}
-          {x.map((lbl, i) => (i % every === 0 || i === n - 1) && (
-            <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#3d4a63">{lbl}</text>
+          {unit && <text x={PAD.l - 8} y={PAD.t - 2} textAnchor="end" fontSize="11" fill="#3d5a78">{unit}</text>}
+          {x.map((lbl, i) => ((i % every === 0 && (n-1-i>=every*.7)) || i === n - 1) && (
+            <text key={i} x={sx(i)} y={height - 8} textAnchor="middle" fontSize="11.5" fill="#3d5a78">{lbl}</text>
           ))}
           {thresholds.map((t) => (
             <g key={t.label}>
               <line x1={PAD.l} x2={PAD.l + iw} y1={sy(t.value)} y2={sy(t.value)} stroke={t.color} strokeWidth="1.5" strokeDasharray={t.dashed === false ? undefined : "6 4"} />
-              <text x={PAD.l + iw + 6} y={sy(t.value) + 4} fontSize="11.5" fill="#000" fontWeight="600">{t.label}</text>
+
             </g>
           ))}
-          {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#000" strokeWidth="1.5" />}
+          {marker !== undefined && <line x1={sx(marker)} x2={sx(marker)} y1={PAD.t} y2={PAD.t + ih} stroke="#04204f" strokeWidth="1.5" />}
           {series.map((s) => (
             <path key={s.name} d={path(s.values)} fill="none" stroke={s.color} strokeWidth="2.25" strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? "6 4" : undefined} />
           ))}
-          {series.length <= 4 && ends.map((e) => (
-            <text key={e.name} x={PAD.l + iw + 6} y={e.y + 4} fontSize="12" fill="#000">
-              <tspan fill={e.color}>●</tspan> {e.name.length > 17 ? e.name.slice(0, 16) + "…" : e.name}
-            </text>
-          ))}
           {hover !== null && (
             <g pointerEvents="none">
-              <line x1={sx(hover)} x2={sx(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#0c1b48" strokeOpacity="0.35" />
+              <line x1={sx(hover)} x2={sx(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#04204f" strokeOpacity="0.35" />
               {series.map((s) => (
-                <circle key={s.name} cx={sx(hover)} cy={sy(s.values[hover])} r="4.5" fill={s.color} stroke="#fff" strokeWidth="2" />
+                <circle key={s.name} cx={sx(hover)} cy={sy(s.values[hover])} r="4.5" fill={s.color} stroke="#04204f" strokeWidth="1.5" />
               ))}
             </g>
           )}
@@ -139,7 +132,7 @@ export function LineChart({
         </svg>
         {hover !== null && (
           <div
-            className="pointer-events-none absolute z-10 rounded-md bg-[var(--color-navy)] px-2.5 py-2 text-[12.5px] text-white shadow-lg"
+            className="pointer-events-none absolute z-10 rounded-md bg-[var(--color-blue-deep)] px-2.5 py-2 text-[12.5px] text-white shadow-lg"
             style={{ left: Math.min(sx(hover) + 10, w - 170), top: 8 }}
           >
             <div className="mb-1 font-[640]">{x[hover]}</div>

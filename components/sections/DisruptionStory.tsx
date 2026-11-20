@@ -24,6 +24,8 @@ export function DisruptionStory() {
   const [stageRef, inView] = useInView<HTMLDivElement>("0px");
   const cards = useRef<(HTMLElement | null)[]>([]);
   const [lockedValve, setLockedValve] = useState<string | null>(null);
+  const [controlState, setControlState] = useState<SimState | null>(null);
+  const onOperationalState = useCallback((value: SimState) => setControlState({ ...value, scene: { ...value.scene, id: 7, clock: "14:20" } }), []);
   const [projection, setProjection] = useState<number | null>(null);
   const onLock = useCallback((v: string | null) => setLockedValve(v), []);
   const onProjection = useCallback((p: number | null) => setProjection(p), []);
@@ -50,7 +52,7 @@ export function DisruptionStory() {
   useEffect(() => { if (live) setSnapshots((m) => (m[live.scene.id] === live ? m : { ...m, [live.scene.id]: live })); }, [live]);
 
   return (
-    <section id="incident" aria-labelledby="story-title" className="bg-white">
+    <section id="incident" aria-labelledby="story-title" className="bg-[var(--color-paper)]">
       <header className="mx-auto max-w-[1400px] px-5 pb-10 pt-24 sm:px-10">
         <h2 id="story-title" className="type-display max-w-[14ch]">One city. Four disruptions.</h2>
         <p className="measure mt-6 text-[1.125rem] leading-relaxed">
@@ -61,22 +63,22 @@ export function DisruptionStory() {
 
       <div className="mx-auto flex max-w-[1400px] flex-col md:grid md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] md:gap-10 md:px-10">
         {/* Sticky viewport */}
-        <div ref={stageRef} className="sticky top-16 z-10 h-[42svh] min-w-0 md:top-20 md:h-[calc(100svh-6rem)]">
+        <div ref={stageRef} className="sticky top-16 z-10 h-[34svh] min-w-0 md:top-20 md:h-[calc(100svh-6rem)]">
           <div className="on-navy relative h-full overflow-hidden bg-[var(--color-navy)] md:rounded-2xl">
             {webgl !== null && (
               <StoryCanvas
-                scene={scene} state={live} active={inView} reduced={reduced} use3d={webgl}
+                scene={scene} state={scene === 7 && controlState ? controlState : live} active={inView} reduced={reduced} use3d={webgl}
                 lockedValve={scene === 7 ? lockedValve : null} projectedStoragePct={scene === 6 ? projection : null}
               />
             )}
-            <nav aria-label="Scenario steps" className="absolute inset-x-0 top-0 flex gap-1 overflow-x-auto bg-gradient-to-b from-[rgba(12,27,72,0.92)] to-transparent p-3 text-white">
+            <nav aria-label="Scenario steps" className="absolute inset-x-0 top-0 flex gap-1 overflow-x-auto bg-gradient-to-b from-[rgba(255,255,255,0.92)] to-transparent p-3 text-black">
               {SCENES.map((s) => (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => goTo(s.id)}
                   aria-current={scene === s.id ? "step" : undefined}
-                  className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-[640] transition-colors ${scene === s.id ? "bg-[var(--color-yellow)] text-black" : "text-white/80 hover:bg-white/10"}`}
+                  className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-[640] transition-colors ${scene === s.id ? "bg-[var(--color-yellow)] text-black" : "text-black/80 hover:bg-black/10"}`}
                 >
                   {s.clock}
                 </button>
@@ -85,8 +87,8 @@ export function DisruptionStory() {
             {live && live.alerts.length > 0 && (
               <ul className="absolute bottom-3 left-3 hidden max-w-[60%] space-y-1.5 md:block" aria-label="Active alerts">
                 {live.alerts.map((a) => (
-                  <li key={a.id} className="flex items-center gap-2 rounded-md bg-[rgba(12,27,72,0.86)] px-2.5 py-1.5 text-[12.5px] text-white">
-                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: a.severity === "critical" ? "#d33a3f" : a.severity === "warning" ? "#e8892b" : "#62a7ea" }} aria-hidden="true" />
+                  <li key={a.id} className="flex items-center gap-2 rounded-md bg-[rgba(255,255,255,0.86)] px-2.5 py-1.5 text-[12.5px] text-black">
+                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: a.severity === "critical" ? "#b3001b" : a.severity === "warning" ? "#c2410c" : "#003483" }} aria-hidden="true" />
                     <span className="font-[600]">{a.title}</span>
                     <span className="opacity-60">{a.raised_at}</span>
                   </li>
@@ -133,7 +135,7 @@ export function DisruptionStory() {
                   {ready && s.id === 4 && <SceneFlatline s={ready} active={active} />}
                   {ready && s.id === 5 && <SceneBloom s={ready} />}
                   {ready && s.id === 6 && <SceneDecision s={ready} active={active} onProjection={onProjection} />}
-                  {ready && s.id === 7 && <SceneControl s={ready} onLock={onLock} />}
+                  {ready && s.id === 7 && <SceneControl s={ready} onLock={onLock} onOperationalState={onOperationalState} />}
                 </div>
                 <div className="mt-8 flex gap-2">
                   {s.id > 1 && <button type="button" className="btn btn-ghost btn-sm" onClick={() => goTo(s.id - 1)}>Previous step</button>}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Html, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, type ReactNode } from "react";
 import * as THREE from "three";
@@ -14,11 +14,12 @@ interface Props {
   minDistance?: number;
   maxDistance?: number;
   label: string;
+  fogRange?: [number, number];
   initial?: { pos: [number, number, number]; fov?: number };
 }
 
 /** One WebGL canvas with lights, orbit controls and the twin context. */
-export function TwinCanvas({ twin, children, active, enableZoom = false, minDistance = 8, maxDistance = 220, label, initial }: Props) {
+export function TwinCanvas({ twin, children, active, enableZoom = false, minDistance = 8, maxDistance = 220, label, initial, fogRange = [140, 320] }: Props) {
   return (
     <Canvas
       role="img"
@@ -31,8 +32,8 @@ export function TwinCanvas({ twin, children, active, enableZoom = false, minDist
       style={{ background: COLORS.navy }}
     >
       <TwinContext.Provider value={twin}>
-        <fog attach="fog" args={[COLORS.navy, 140, 320]} />
-        <hemisphereLight args={["#dfeaff", "#0c1b48", 1.1]} />
+        <fog attach="fog" args={[COLORS.navy, ...fogRange]} />
+        <hemisphereLight args={["#ffffff", "#8fd0c4", 1.15]} />
         <directionalLight position={[40, 70, 30]} intensity={1.8} color="#ffffff" />
         <directionalLight position={[-50, 20, -40]} intensity={0.55} color="#9cc4ef" />
         <OrbitControls
@@ -46,8 +47,6 @@ export function TwinCanvas({ twin, children, active, enableZoom = false, minDist
           maxDistance={maxDistance}
           maxPolarAngle={Math.PI * 0.62}
         />
-        {/* Sentinel: works around the first drei <Html> in a canvas occasionally being dropped on mount. */}
-        <Html style={{ display: "none" }}><span /></Html>
         <Suspense fallback={null}>{children}</Suspense>
       </TwinContext.Provider>
     </Canvas>

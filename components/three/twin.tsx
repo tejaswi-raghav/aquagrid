@@ -30,12 +30,13 @@ export function useTwin() {
 }
 
 export const COLORS = {
-  navy: "#0c1b48",
-  navy2: "#16285f",
-  navy3: "#24397a",
-  blue: "#62a7ea",
-  blueDeep: "#2f7fd0",
-  yellow: "#fff44f",
+  navy: "#f2fafa",
+  navy2: "#dff2f0",
+  navy3: "#c9e9e5",
+  deep: "#003483",
+  blue: "#0078c0", // logo blue: flowing water reads clearly on the pale ground
+  blueDeep: "#0058b8",
+  yellow: "#b2fc6f",
   white: "#f4f7fb",
   concrete: "#c9d3e1",
   steel: "#9fb0c8",
@@ -43,7 +44,7 @@ export const COLORS = {
   amber: "#e8892b",
   red: "#d33a3f",
   grey: "#7f8aa3",
-  sea: "#123b80",
+  sea: "#0078c0",
 };
 
 export function statusColor(status: Status | undefined): string {
@@ -52,7 +53,7 @@ export function statusColor(status: Status | undefined): string {
     case "warning": case "flatline": case "fault": case "watch": return COLORS.amber;
     case "quarantined": case "isolated": return COLORS.grey;
     case "closed": return COLORS.yellow;
-    default: return COLORS.blue;
+    default: return COLORS.deep;
   }
 }
 

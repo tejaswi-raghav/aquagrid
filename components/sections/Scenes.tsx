@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api, ApiError, type DesalModel, type Evaluation, type SensorAnalysis, type SimState, type StageResult } from "@/lib/api";
 import { useScenario } from "@/components/ScenarioController";
 import { Authority, CheckList, ErrorNote, Figure, StatusChip, Verdict } from "@/components/ui/bits";
+import { StoryControl } from "./StoryControl";
 import { LineChart, SERIES } from "@/components/ui/LineChart";
 
 const money = (v: number) => `$${Math.round(v).toLocaleString()}`;
@@ -84,7 +85,7 @@ export function SceneLeak({ s }: { s: SimState }) {
         title="Sector 4 inflow against expected demand"
         x={fm.series.map((p) => p.t)} unit="m³/h"
         series={[{ name: "Inflow FM-S4", values: fm.series.map((p) => p.v), color: SERIES.s1 }]}
-        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#000" }] : []}
+        thresholds={s.evidence ? [{ value: s.evidence.flow_balance.expected_demand_m3h, label: "Expected", color: "#04204f" }] : []}
         format={(v) => v.toFixed(0)} height={180}
       />
       <LineChart
@@ -185,7 +186,7 @@ export function SceneBloom({ s }: { s: SimState }) {
         title="Chlorophyll-a at the intake"
         x={chl.series.map((p) => p.t)} unit="µg/L" yMin={0}
         series={[{ name: "CHL-01", values: chl.series.map((p) => p.v), color: SERIES.s2 }]}
-        thresholds={[{ value: chl.thresholds.warning ?? 7, label: "Warning", color: "#e8892b" }]}
+        thresholds={[{ value: chl.thresholds.warning ?? 7, label: "Warning", color: "#c2410c" }]}
         height={180}
       />
       <table className="w-full text-left text-[14px]">
@@ -256,7 +257,7 @@ export function SceneDecision({ s, active, onProjection }: { s: SimState; active
               { name: "Baseline", values: ev.baseline.levels_pct, color: SERIES.reference, dashed: true },
               { name: "Peak throttling", values: p.levels_pct, color: SERIES.s1 },
             ]}
-            thresholds={[{ value: p.floor_pct, label: `${p.floor_pct}% floor`, color: "#d33a3f", dashed: false }]}
+            thresholds={[{ value: p.floor_pct, label: `${p.floor_pct}% floor`, color: "#b3001b", dashed: false }]}
             band={[0, 6]} bandLabel="Peak tariff" format={(v) => v.toFixed(1)} height={220}
           />
           <div className="grid grid-cols-2 gap-5">
@@ -287,114 +288,6 @@ export function SceneDecision({ s, active, onProjection }: { s: SimState; active
 }
 
 /* 7 ─ Human control */
-export function SceneControl({ s, onLock }: { s: SimState; onLock: (valve: string | null) => void }) {
-  const { ctx, session, setSession, addValveRecord, applyState, log } = useScenario();
-  const [staged, setStaged] = useState<StageResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [opId, setOpId] = useState("CR-07");
-  const [pin, setPin] = useState("");
-  const applied = s.valves["V-04B"]?.position === "closed";
-
-  useEffect(() => {
-    onLock(staged?.proposal && !applied ? staged.proposal.valve_id : null);
-  }, [staged, applied, onLock]);
-
-  const stage = async (valve: "V-04A" | "V-04B", by: string) => {
-    setBusy(true); setError(null);
-    try {
-      const r = await api.stage(ctx, valve, "close", by);
-      setStaged(r);
-      log({ kind: r.evaluation.verdict === "REJECTED" ? "rejection" : "decision", title: `Close ${valve} ${r.evaluation.verdict === "REJECTED" ? "rejected" : "staged and locked"}`, detail: r.evaluation.headline });
-    } catch (e) { setError(e instanceof ApiError ? e.message : "Staging failed."); }
-    finally { setBusy(false); }
-  };
-
-  const signIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBusy(true); setError(null);
-    try {
-      const r = await api.login(opId, pin);
-      setSession(r); setPin("");
-      log({ kind: "info", title: `${r.operator.name} signed in`, detail: `Role: ${r.operator.role.replace(/_/g, " ")}` });
-    } catch (e) { setError(e instanceof ApiError ? e.message : "Sign-in failed."); }
-    finally { setBusy(false); }
-  };
-
-  const approve = async () => {
-    if (!staged?.proposal || !staged.signature || !session) return;
-    setBusy(true); setError(null);
-    try {
-      const r = await api.approve(ctx, staged.proposal, staged.signature, session.token);
-      addValveRecord({ record: r.record, signature: r.signature });
-      applyState(r.state);
-      log({ kind: "approval", title: `V-04B closed by ${r.operator.name}`, detail: "Backend revalidated the proposal before applying it to the simulated valve." });
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Approval failed.");
-      if (e instanceof ApiError && e.status === 403) log({ kind: "rejection", title: "Approval refused", detail: e.message });
-    } finally { setBusy(false); }
-  };
-
-  const ev = staged?.evaluation;
-  const canApprove = !!staged?.proposal && !!session && !applied;
-  return (
-    <>
-      {applied ? (
-        <Verdict kind="accepted" headline="V-04B closed in the simulation">
-          The Harbour branch is isolated, modelled leak loss is {s.leak.modelled_loss_m3h} m³/h and Sector 4 pressure is back to{" "}
-          {s.sensors["P-S4A"].value} bar. The hospital stays supplied. No physical valve was touched.
-        </Verdict>
-      ) : s.staged_suggestion && (
-        <div className="rounded-lg border border-[var(--color-line)] p-4">
-          <p className="text-[13px] text-[var(--color-muted)]">{s.staged_suggestion.proposed_by} suggests</p>
-          <p className="mt-1 text-[1.0625rem] font-[620] leading-snug">{s.staged_suggestion.text}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" className="btn btn-primary btn-sm" disabled={busy} onClick={() => stage("V-04B", s.staged_suggestion!.proposed_by)}>Stage the valve change</button>
-            <button type="button" className="btn btn-ghost btn-sm" disabled={busy} onClick={() => stage("V-04A", "What-if: close the sector inlet")}>What if it closed V-04A instead?</button>
-          </div>
-        </div>
-      )}
-
-      {ev && !applied && (
-        <div className="space-y-3">
-          <Verdict kind={ev.verdict === "REJECTED" ? "rejected" : "locked"} headline={ev.headline}>
-            {ev.verdict === "REJECTED"
-              ? `Closing ${ev.valve_id} fails the safety checks. Nothing can be approved.`
-              : `Closing ${ev.valve_id} passes every check, but the change stays locked until a Control-Room Operator approves it.`}
-          </Verdict>
-          <CheckList checks={ev.checks} />
-        </div>
-      )}
-
-      {staged?.proposal && !applied && (
-        <div className="rounded-lg bg-[var(--color-mist)] p-4">
-          {session ? (
-            <div className="space-y-3">
-              <p className="text-[14.5px]">Signed in as <span className="font-[680]">{session.operator.name}</span> ({session.operator.sub}).</p>
-              <div className="flex flex-wrap gap-2">
-                <button type="button" className="btn btn-primary btn-sm" onClick={approve} disabled={!canApprove || busy}>Approve and close V-04B</button>
-                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSession(null)}>Sign out</button>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={signIn} className="space-y-3">
-              <p className="text-[14.5px] font-[680]">Operator sign-in</p>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="text-[13px]">Operator ID
-                  <input value={opId} onChange={(e) => setOpId(e.target.value)} autoComplete="username" className="mt-1 block w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-[15px]" />
-                </label>
-                <label className="text-[13px]">PIN
-                  <input value={pin} onChange={(e) => setPin(e.target.value)} type="password" inputMode="numeric" autoComplete="current-password" className="mt-1 block w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-[15px]" />
-                </label>
-              </div>
-              <button type="submit" className="btn btn-blue btn-sm" disabled={busy || !pin}>Sign in</button>
-              <p className="text-[12.5px] text-[var(--color-muted)]">Demo accounts: CR-07 / 2468 can approve. AN-02 / 1357 is an analyst and will be refused.</p>
-            </form>
-          )}
-        </div>
-      )}
-      {error && <ErrorNote>{error}</ErrorNote>}
-      <p className="text-[13px] text-[var(--color-muted)]">Simulation only. AquaGrid has no connection to any real valve, PLC or SCADA system.</p>
-    </>
-  );
+export function SceneControl({ onLock, onOperationalState }: { s: SimState; onLock: (valve: string | null) => void; onOperationalState: (state: SimState) => void }) {
+  return <StoryControl onLock={onLock} onOperationalState={onOperationalState} />;
 }
