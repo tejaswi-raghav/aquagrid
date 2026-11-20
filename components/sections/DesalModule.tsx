@@ -42,7 +42,12 @@ function Stage({ index, id, name, powerKw, children }: { index: number; id: stri
   return (
     <group ref={ref}>
       <Asset id={id} ring={3.4} label={false}>{children}</Asset>
-      <Html position={[0, index % 2 === 0 ? 4.2 : 6.4, 0]} center zIndexRange={[15, 5]} style={{ pointerEvents: "none" }}>
+      <Html
+        position={[0, index % 2 === 0 ? 4.2 : 6.4, 0]}
+        center={index !== 0}
+        zIndexRange={[15, 5]}
+        style={{ pointerEvents: "none" }}
+      >
         <div className={`whitespace-nowrap rounded-md px-2 py-1 text-center text-[12.5px] leading-tight ${selected === id ? "bg-[var(--color-yellow)] text-black" : "bg-[rgba(255,255,255,0.85)] text-black"}`}>
           <div className="font-[660]">{index + 1}. {name}</div>
           {powerKw !== undefined && <div className="opacity-80">{powerKw > 0 ? `${powerKw.toLocaleString()} kW` : "no direct load"}</div>}
